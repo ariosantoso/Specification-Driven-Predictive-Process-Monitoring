@@ -1,0 +1,263 @@
+<!--
+        Specification-Driven-Predictive-Process-Monitoring
+        Copyright (C) 2018 Ario Santoso (santoso.ario@gmail.com)
+   
+        This program is free software: you can redistribute it and/or modify
+        it under the terms of the GNU General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+   
+        This program is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU General Public License for more details.
+   
+        You should have received a copy of the GNU General Public License
+        along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>Specification-Driven-Predictive-Process-Monitoring</groupId>
+  <artifactId>Specification-Driven-Predictive-Process-Monitoring</artifactId>
+  <version>1.0</version>
+  <name>Specification-Driven-Predictive-Process-Monitoring</name>
+  <description>Specification Driven Predictive Process Monitoring Tool</description>
+  
+  
+  
+    <properties>
+        <java>1.8</java>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        
+		<!-- =============================================================== -->
+        <!-- SOME VERSIONING AND PATH VARIABLES -->
+		<!-- =============================================================== -->
+        
+		<!-- SPEX -->
+	        <!-- <spex.jar.path>${project.basedir}/src/main/resources/JARS/Spex.jar</spex.jar.path> -->
+
+		<!-- OPENXES -->
+	        <!-- <openxes.version>2.20</openxes.version> -->
+	        <!-- <openxes.jar.path>${project.basedir}/src/main/resources/JARS/OpenXES-20171019.jar</openxes.jar.path> -->
+                
+        <!-- ANTLR -->        
+	        <!-- <antlr.jar.path>${project.basedir}/src/main/resources/JARS/antlr-4.7-complete.jar</antlr.jar.path> -->
+
+        <!-- ProM -->        
+	        <prom.path>${user.home}/ProM</prom.path>
+                
+		<!-- =============================================================== -->
+        <!-- END OF SOME VERSIONING AND PATH VARIABLES -->
+		<!-- =============================================================== -->
+
+	</properties>
+	
+	   <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>${java}</source>
+                    <target>${java}</target>
+                    <configurationDirectory>${openxes.jar.path}</configurationDirectory>
+                    <configurationDirectory>${spex.jar.path}</configurationDirectory>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.5.0</version>
+                <configuration>
+                    <includePluginDependencies>true</includePluginDependencies>
+                    <mainClass>org.astw.Main</mainClass>
+                </configuration>
+            </plugin>
+            
+            <plugin>
+		        <groupId>org.codehaus.mojo</groupId>
+		        <artifactId>license-maven-plugin</artifactId>
+		        <version>1.16</version>
+		        <executions>
+		          <execution>
+		            <id>download-licenses</id>
+		            <goals>
+		              <goal>download-licenses</goal>
+		            </goals>
+		          </execution>
+		        </executions>
+		    </plugin>
+            
+            <!-- Generate large JAR with dependencies-->
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.5.1</version>
+                <configuration>
+                    <finalName>SDPROM</finalName>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <appendAssemblyId>false</appendAssemblyId>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- END OF Generate large JAR with dependencies-->
+            
+        </plugins>
+    </build>
+    
+    <repositories>
+        <repository>
+            <id>mvn-local-repo</id>
+            <name>Local Maven Repository</name>
+            <url>file://${basedir}/mvn-local-repo</url>
+        </repository>
+    </repositories>
+    
+	<dependencies>
+	
+		<!-- =============================================================== -->
+		<!-- WEKA -->
+        <!-- =============================================================== -->
+		<!-- https://mvnrepository.com/artifact/nz.ac.waikato.cms.weka/weka-stable -->
+		<dependency>
+		       <groupId>nz.ac.waikato.cms.weka</groupId>
+		       <artifactId>weka-stable</artifactId>
+		       <version>3.8.1</version>
+		</dependency>
+		<!-- =============================================================== -->
+		<!-- WEKA -->
+        <!-- =============================================================== -->
+
+
+		<!-- =============================================================== -->
+		<!-- Local Maven libraries -->
+        <!-- =============================================================== -->
+
+		<dependency>
+            <groupId>Spex</groupId>
+            <artifactId>spex</artifactId>
+            <version>1.0</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>OpenXes</groupId>
+            <artifactId>openxes</artifactId>
+            <version>2.21</version>
+        </dependency>
+
+		<dependency>
+            <groupId>antlr</groupId>
+            <artifactId>antlr</artifactId>
+            <version>4.7</version>
+        </dependency>
+        
+        <!-- =============================================================== -->
+		<!-- END OF Local Maven libraries -->
+        <!-- =============================================================== -->
+		
+        <!-- =============================================================== -->
+		<!-- External libraries -->
+        <!-- =============================================================== -->        
+        
+		<!-- https://mvnrepository.com/artifact/net.sf.trove4j/trove4j -->
+		<dependency>
+		    <groupId>net.sf.trove4j</groupId>
+		    <artifactId>trove4j</artifactId>
+		    <version>3.0.3</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
+		<dependency>
+		    <groupId>com.google.guava</groupId>
+		    <artifactId>guava</artifactId>
+		    <version>22.0</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<version>2.9.9</version>
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/nz.ac.waikato.cms.weka/gridSearch -->
+	    <dependency>
+	        <groupId>nz.ac.waikato.cms.weka</groupId>
+	        <artifactId>gridSearch</artifactId>
+	        <version>1.0.11</version>
+	    </dependency>
+    
+		<!-- =============================================================== -->
+		<!-- END OF External libraries -->
+        <!-- =============================================================== -->        
+		
+
+		<!-- =============================================================== -->
+		<!-- ProM Related -->
+        <!-- =============================================================== -->        
+
+		<dependency>
+            <groupId>ProM</groupId>
+            <artifactId>ProM</artifactId>
+            <version>6.6</version>
+            <scope>system</scope>
+            <systemPath>${prom.path}/ProM66.jar</systemPath>
+        </dependency>
+
+		<dependency>
+            <groupId>ProMUITopia</groupId>
+            <artifactId>ProMUITopia</artifactId>
+            <version>6.6</version>
+            <scope>system</scope>
+            <systemPath>${prom.path}/ProM66_lib/Uitopia.jar</systemPath>
+        </dependency>
+		
+		<!-- 
+		<dependency>
+            <groupId>ProM-Context</groupId>
+            <artifactId>ProM-Context</artifactId>
+            <version>6.7</version>
+            <scope>system</scope>
+            <systemPath>${user.home}/ProM67/prom-6.7-all-platforms/ProM67_dist/ProM-Contexts.jar</systemPath>
+        </dependency>
+
+		<dependency>
+            <groupId>ProM-Framework</groupId>
+            <artifactId>ProM-Framework</artifactId>
+            <version>6.7</version>
+            <scope>system</scope>
+            <systemPath>${user.home}/ProM67/prom-6.7-all-platforms/ProM67_dist/ProM-Framework.jar</systemPath>
+        </dependency>
+        
+        <dependency>
+            <groupId>ProM-Models</groupId>
+            <artifactId>ProM-Models</artifactId>
+            <version>6.7</version>
+            <scope>system</scope>
+            <systemPath>${user.home}/ProM67/prom-6.7-all-platforms/ProM67_dist/ProM-Models.jar</systemPath>
+        </dependency>
+        
+        <dependency>
+            <groupId>ProM-Plugins</groupId>
+            <artifactId>ProM-Plugins</artifactId>
+            <version>6.7</version>
+            <scope>system</scope>
+            <systemPath>${user.home}/ProM67/prom-6.7-all-platforms/ProM67_dist/ProM-Plugins.jar</systemPath>
+        </dependency>
+		-->
+		 
+		<!-- =============================================================== -->
+		<!-- END OF ProM Related -->
+        <!-- =============================================================== -->        
+		
+	</dependencies>
+	
+</project>

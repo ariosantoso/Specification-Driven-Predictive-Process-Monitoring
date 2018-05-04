@@ -1,0 +1,9 @@
+mvn install:install-file -DlocalRepositoryPath=./mvn-local-repo/ -DgroupId=Spex -DartifactId=spex -Dversion=1.0 -Dpackaging=jar -Dfile=Spex.jar
+
+
+mvn install:install-file -DlocalRepositoryPath=./mvn-local-repo/ -DgroupId=OpenXes -DartifactId=openxes -Dversion=2.21 -Dpackaging=jar -Dfile=OpenXES-20171120.jar
+
+
+mvn install:install-file -DlocalRepositoryPath=./mvn-local-repo/ -DgroupId=antlr -DartifactId=antlr -Dversion=4.7 -Dpackaging=jar -Dfile=antlr-4.7-complete.jar 
+
+
