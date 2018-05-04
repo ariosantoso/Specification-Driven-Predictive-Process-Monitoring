@@ -42,7 +42,7 @@ Email: santoso[dot]ario[at]gmail[dot]com <br />
 Homepage: http://bit.ly/ariosantoso 
 
 ## Citing Our Work
-You may use the following bibtex entries in order to cite our work:
+You may use the following bibtex entries in order to cite this work:
 
 ```
 @inproceedings{AS-BPMDS-18,
