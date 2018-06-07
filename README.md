@@ -1,6 +1,6 @@
 [![GitHub license](https://img.shields.io/badge/license-GNU%20General%20Public%20License%20v3.0-blue.svg?style=flat)](http://www.gnu.org/licenses/)
 
-# SDPROM - [Specification Driven Predictive Process Monitoring](https://doi.org/10.1007/978-3-319-91704-7_7) Tool
+# SDPROM - Specification Driven Predictive Process Monitoring Tool
 
 **Predictive business process monitoring** aims at forecasting the future information of a running business process based on the models extracted from business process execution logs (event logs). This tool, which is called **SDPROM**, is a prototype that implements the Specification-Driven Predictive Process Monitoring approach introduced in [[1](https://doi.org/10.1007/978-3-319-91704-7_7), [2](https://arxiv.org/abs/1804.00617)]. It is a [ProM](http://promtools.org) plug-in, and it enables us to
 * specify the desired prediction tasks using the language that is introduced in [[1](https://doi.org/10.1007/978-3-319-91704-7_7), [2](https://arxiv.org/abs/1804.00617)], and
@@ -68,6 +68,6 @@ You may use the following bibtex entries in order to cite this work:
 ```
 
 ## References
-[1] [Ario Santoso](http://bit.ly/ariosantoso): **[Specification-Driven Multi-Perspective Predictive Business Process Monitoring](https://doi.org/10.1007/978-3-319-91704-7_7)**. In Enterprise, Business-Process and Information Systems Modeling, BPMDS 2018, EMMSAD 2018. LNBIP. vol 318. pages 97-113. Springer.
+[1] [Ario Santoso](http://bit.ly/ariosantoso): **[Specification-Driven Multi-Perspective Predictive Business Process Monitoring](https://doi.org/10.1007/978-3-319-91704-7_7)**. In [Enterprise, Business-Process and Information Systems Modeling, BPMDS 2018, EMMSAD 2018](https://doi.org/10.1007/978-3-319-91704-7). LNBIP. vol 318. pages 97-113. Springer.
 
 [2] [Ario Santoso](http://bit.ly/ariosantoso): **[Specification-Driven Multi-Perspective Predictive Business Process Monitoring (Extended Version)](https://arxiv.org/abs/1804.00617)**. CoRR Technical Report arXiv:1804.00617, arXiv.org e-Print archive (2018), available at https://arxiv.org/abs/1804.00617.
