@@ -68,6 +68,6 @@ You may use the following bibtex entries in order to cite this work:
 ```
 
 ## References
-[1] [Ario Santoso](http://bit.ly/ariosantoso): **[Specification-Driven Multi-Perspective Predictive Business Process Monitoring](https://doi.org/10.1007/978-3-319-91704-7_7)**. In [Enterprise, Business-Process and Information Systems Modeling, BPMDS 2018, EMMSAD 2018](https://doi.org/10.1007/978-3-319-91704-7). LNBIP. vol 318. pages 97-113. Springer.
+[1] [Ario Santoso](http://bit.ly/ariosantoso) (2018): **[Specification-Driven Multi-Perspective Predictive Business Process Monitoring](https://doi.org/10.1007/978-3-319-91704-7_7)**. In [Enterprise, Business-Process and Information Systems Modeling, BPMDS 2018, EMMSAD 2018](https://doi.org/10.1007/978-3-319-91704-7). LNBIP. vol 318. pages 97-113. Springer.
 
-[2] [Ario Santoso](http://bit.ly/ariosantoso): **[Specification-Driven Multi-Perspective Predictive Business Process Monitoring (Extended Version)](https://arxiv.org/abs/1804.00617)**. CoRR Technical Report arXiv:1804.00617, arXiv.org e-Print archive (2018), available at https://arxiv.org/abs/1804.00617.
+[2] [Ario Santoso](http://bit.ly/ariosantoso) (2018): **[Specification-Driven Multi-Perspective Predictive Business Process Monitoring (Extended Version)](https://arxiv.org/abs/1804.00617)**. CoRR Technical Report arXiv:1804.00617, arXiv.org e-Print archive, available at https://arxiv.org/abs/1804.00617.
