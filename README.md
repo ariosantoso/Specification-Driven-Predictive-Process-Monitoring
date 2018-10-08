@@ -36,7 +36,7 @@ GNU General Public License for more details.
 This project is a [Maven](http://maven.apache.org/) project. Thus, compiling and building the release binaries can be done using maven in the usual way. Currently we use Maven 3 and Java 8 to build the project.
 
 ## Contact
-For more information, please contact the author: <br />
+For more information or if you find any problem regarding this work, please contact the author: <br />
 [Ario Santoso](http://bit.ly/ariosantoso) <br />
 Email: santoso[dot]ario[at]gmail[dot]com <br />
 Homepage: http://bit.ly/ariosantoso 
