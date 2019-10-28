@@ -65,15 +65,6 @@ If you use our work (e.g., our software) please cite this work. You may use the 
   year = "2018”,
   doi="https://doi.org/10.1007/978-3-319-91704-7_7"
 }
-@TechReport{AS-CORR-18,
-  author =       "Ario Santoso",
-  title =        "Specification-Driven Multi-Perspective Predictive Business Process Monitoring (Extended Version)",
-  institution =  "arXiv.org e-Print archive",
-  year =         "2018",
-  type =         "CoRR Technical Report",
-  number =       "arXiv:1804.00617",
-  note =         "Available at \protect\url{https://arxiv.org/abs/1804.00617}",
-}
 ```
 
 ## References
