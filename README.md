@@ -48,22 +48,22 @@ If you use our work (e.g., our software) please cite this work. You may use the 
 
 ```
 @Article{SF-SOSYM-19,
- author="Ario Santoso and Michael Felderer",
- title="Specification-driven predictive business process monitoring",
- journal="International Journal on Software and Systems Modeling (SoSym)",
- year="2019",
- note="(to appear)",
+  author="Ario Santoso and Michael Felderer",
+  title="Specification-driven predictive business process monitoring",
+  journal="International Journal on Software and Systems Modeling (SoSym)",
+  year="2019",
+  note="(to appear)",
 }
 @incollection{AS-BPMDS-18,
- author = “Ario Santoso”,
- title = "Specification-Driven Multi-Perspective Predictive Business Process Monitoring",
- booktitle = "Enterprise, Business-Process and Information Systems Modeling, BPMDS 2018, EMMSAD 2018",
- series = "Lecture Notes in Business Information Processing",
- volume="318",
- pages="97-113",
- publisher = "Springer",
- year = "2018”,
- doi="https://doi.org/10.1007/978-3-319-91704-7_7"
+  author = “Ario Santoso”,
+  title = "Specification-Driven Multi-Perspective Predictive Business Process Monitoring",
+  booktitle = "Enterprise, Business-Process and Information Systems Modeling, BPMDS 2018, EMMSAD 2018",
+  series = "Lecture Notes in Business Information Processing",
+  volume="318",
+  pages="97-113",
+  publisher = "Springer",
+  year = "2018”,
+  doi="https://doi.org/10.1007/978-3-319-91704-7_7"
 }
 @TechReport{AS-CORR-18,
   author =       "Ario Santoso",
