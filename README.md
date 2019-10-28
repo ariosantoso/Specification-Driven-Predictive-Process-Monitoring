@@ -1,12 +1,14 @@
 [![GitHub license](https://img.shields.io/badge/license-GNU%20General%20Public%20License%20v3.0-blue.svg?style=flat)](http://www.gnu.org/licenses/)
 
-# SDPROM - Specification Driven Predictive Process Monitoring Tool
+# SDPROM v2 - Specification Driven Predictive Process Monitoring Tool
 
-**Predictive business process monitoring** aims at forecasting the future information of a running business process based on the models extracted from business process execution logs (event logs). This tool, which is called **SDPROM**, is a prototype that implements the Specification-Driven Predictive Process Monitoring approach introduced in [[1](https://doi.org/10.1007/978-3-319-91704-7_7), [2](https://arxiv.org/abs/1804.00617)]. It is a [ProM](http://promtools.org) plug-in, and it enables us to
+**Predictive business process monitoring** aims at forecasting the future information of a running business process based on the models extracted from business process execution logs (event logs). This tool, which is called **SDPROM v2**, is a prototype that implements the Specification-Driven Predictive Process Monitoring approach introduced in [[1](https://doi.org/10.1007/978-3-319-91704-7_7), [2](https://arxiv.org/abs/1804.00617)]. This prototype extends the previous version in https://github.com/ariosantoso/Specification-Driven-Predictive-Process-Monitoring/tree/V1, and the extension is based on our paper that has been accepted for publication in the [International Journal on Software and Systems Modeling](http://www.sosym.org/) ([SoSyM](http://www.sosym.org/)). 
+
+It is a [ProM](http://promtools.org) plug-in, and it enables us to
 * specify the desired prediction tasks using the language that is introduced in [[1](https://doi.org/10.1007/978-3-319-91704-7_7), [2](https://arxiv.org/abs/1804.00617)], and
 * create the corresponding prediction models based on the given specification.
 
-Once the prediction models has been created, they can be used to provide predictive analysis service in business process monitoring. The [screencast](http://bit.ly/sdprom-screencast) of this tool, which explains the way how to use our tool ([ProM](http://promtools.org) plug-in), can be found in http://bit.ly/sdprom-screencast. The user manual  of our tools (including the instructions on how to reproduce our experiments) can be found in http://bit.ly/sdprom-manual. The binary distribution (.jar) of this tool can be found in http://bit.ly/sdprom-dist. More information about this work can be found in [[1](https://doi.org/10.1007/978-3-319-91704-7_7), [2](https://arxiv.org/abs/1804.00617)] and http://bit.ly/predictive-analysis. 
+Once the prediction models has been created, they can be used to provide predictive analysis service in business process monitoring. The [screencast](http://bit.ly/sdprom2-screencast) of this tool, which explains the way how to use our tool ([ProM](http://promtools.org) plug-in), can be found in http://bit.ly/sdprom2-screencast. The user manual  of our tools (including the instructions on how to reproduce our experiments) can be found in http://bit.ly/sdprom2-manual. The binary distribution (.jar) of this tool can be found in http://bit.ly/sdprom2-dist. More information about this work can be found in http://bit.ly/sdprom2. 
 
 The following picture illustrates our approach:
 
@@ -45,6 +47,13 @@ Homepage: http://bit.ly/ariosantoso
 If you use our work (e.g., our software) please cite this work. You may use the following bibtex entries in order to cite this work:
 
 ```
+@Article{SF-SOSYM-19,
+author="Ario Santoso and Michael Felderer",
+title="Specification-driven predictive business process monitoring",
+journal="International Journal on Software and Systems Modeling (SoSym)",
+year="2019",
+note="(to appear)",
+}
 @incollection{AS-BPMDS-18,
  author = “Ario Santoso”,
  title = "Specification-Driven Multi-Perspective Predictive Business Process Monitoring",
