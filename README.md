@@ -48,11 +48,11 @@ If you use our work (e.g., our software) please cite this work. You may use the 
 
 ```
 @Article{SF-SOSYM-19,
-author="Ario Santoso and Michael Felderer",
-title="Specification-driven predictive business process monitoring",
-journal="International Journal on Software and Systems Modeling (SoSym)",
-year="2019",
-note="(to appear)",
+ author="Ario Santoso and Michael Felderer",
+ title="Specification-driven predictive business process monitoring",
+ journal="International Journal on Software and Systems Modeling (SoSym)",
+ year="2019",
+ note="(to appear)",
 }
 @incollection{AS-BPMDS-18,
  author = “Ario Santoso”,
