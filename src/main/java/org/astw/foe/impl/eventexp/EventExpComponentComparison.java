@@ -18,6 +18,7 @@
 package org.astw.foe.impl.eventexp;
 
 import java.util.HashMap;
+import java.util.Set;
 
 import org.astw.foe.EventExp;
 import org.astw.foe.EventExpComponent;
@@ -35,8 +36,8 @@ import org.deckfour.xes.model.XTrace;
  */
 public class EventExpComponentComparison implements EventExp{
 
-	//e ::= nonNumExp1 lcop nonNumExp2 | numExp1 acop numExp2 | e1 lcop e2
-    
+	//e ::= nonNumExp1 lcop nonNumExp2 | numExp1 acop numExp2 
+	
 	//public enum EventExpConnective {EQUAL, NOT_EQUAL, GREATER_THAN, LESS_THAN, GREATER_THAN_OR_EQUAL, LESS_THAN_OR_EQUAL}
 
 	private EventExpComponent component1;
@@ -126,6 +127,11 @@ public class EventExpComponentComparison implements EventExp{
 
 	private boolean evaluateNonNumExp(NonNumExp nne1, NonNumExp nne2){
 	
+		if(	nne1.getNonNumericValue().equals(Const.UNDEFINED_NON_NUM_VAL) || 
+			nne2.getNonNumericValue().equals(Const.UNDEFINED_NON_NUM_VAL))
+			return false;
+
+		
 		if(nne1.getXESDataType() != nne2.getXESDataType()){
 			
 			return false;
@@ -173,8 +179,9 @@ public class EventExpComponentComparison implements EventExp{
 	
 	private boolean evaluateNumExp(NumExp ne1, NumExp ne2){
 		
-//		if(ne1.getNumericValue() == Const.UNDEFINED_NUM_VAL || ne1.getNumericValue() == Const.UNDEFINED_NUM_VAL)
-//			return false;
+		
+		if(Double.isNaN(ne1.getNumericValue()) || Double.isNaN(ne2.getNumericValue()))
+			return false;
 
 		if(this.connective == Const.ComparisonOperator.EQUAL){
 			return (ne1.getNumericValue() == ne2.getNumericValue());
@@ -226,6 +233,13 @@ public class EventExpComponentComparison implements EventExp{
 		this.component2.evaluateSpecialIndex(current, last);
 	}
 
+	public void evaluateAggregateFunction(XTrace xtrace) throws Exception{
+		
+		
+		this.component1.evaluateAggregateFunction(xtrace);
+		this.component2.evaluateAggregateFunction(xtrace);
+	}
+
 	@Override
 	public boolean evaluateGroundedFormula() throws Exception {
 	
@@ -233,4 +247,16 @@ public class EventExpComponentComparison implements EventExp{
 
 		return this.getValue();
 	}
+	
+	@Override
+	public Set<String> getVariables(){
+		
+		Set<String> comp1Vars = this.component1.getVariables();
+		Set<String> comp2Vars = this.component2.getVariables();
+		
+		comp1Vars.addAll(comp2Vars);
+		
+		return comp1Vars;
+	}
+
 }

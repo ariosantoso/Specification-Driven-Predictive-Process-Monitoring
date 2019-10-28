@@ -37,6 +37,13 @@ public class OneHotEncodingV2Info {
 	private int maxTraceLength;
 	private int numOfDifferentValues;
 
+//	public OneHotEncodingV2Info(String xesAttName, XLog xlog, int maxTraceLength){
+//		
+//		this(xesAttName, xlog);
+//		this.maxTraceLength = maxTraceLength;		
+//	}
+
+	//it uses the maximal trace length in the log as the number of the n-last events to be considered in the encoding
 	public OneHotEncodingV2Info(String xesAttName, XLog xlog){
 		
 		this.xesAttName = xesAttName;		

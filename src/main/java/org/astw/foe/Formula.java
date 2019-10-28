@@ -18,6 +18,7 @@
 package org.astw.foe;
 
 import java.util.HashMap;
+import java.util.Set;
 
 import org.astw.analyticrules.ConditionExpression;
 import org.astw.util.Const.XESDataType;
@@ -36,13 +37,24 @@ public interface Formula extends ConditionExpression{
 	public String toString();
 	public String prettyFormat(String tab);
 	public Formula clone();
-	public void assignQueryXESDataType(HashMap<String, XESDataType> attributeNamesAndTypes)  throws Exception;
+	//public void assignQueryXESDataType(HashMap<String, XESDataType> attributeNamesAndTypes)  throws Exception;
 
 	public void substituteVar(String varName, int value);
 	public Formula eliminateQuantifier(int domainSize);
-	
+		
+	//evaluate the aggregate functions
+	public void evaluateAggregateFunction(XTrace xtrace) throws Exception;
+
+	//evaluate the queries/attribute accessors
 	public void evaluateQuery(XTrace xtrace) throws Exception;
+
+	//evaluate the special indices (i.e., CURR and LAST) with the concrete values
 	public void evaluateSpecialIndex(int current, int last);
+
+	//collect all variables 
+	public Set<String> getVariables();
+
+	
 	public boolean evaluateGroundedFormula() throws Exception;
 	////////////////////////////////////////////////////////////////////////////////
 	// END OF Common shared method

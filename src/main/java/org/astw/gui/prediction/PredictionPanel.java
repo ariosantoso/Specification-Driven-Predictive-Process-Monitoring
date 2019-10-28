@@ -30,6 +30,9 @@ import org.astw.util.XESUtil;
 import org.deckfour.xes.model.XLog;
 import org.deckfour.xes.model.XTrace;
 
+import jep.Jep;
+import jep.JepException;
+
 /**
  * 
  * @author Ario Santoso (santoso.ario@gmail.com)
@@ -46,7 +49,7 @@ public class PredictionPanel extends JPanel{
 	private TraceViewerPanel inputTraceViewer;
 	private AllResultViewer predResultPanel;
 	private PredictionResults[] predResults;
-	
+	private Jep jep;
 	
 	public PredictionPanel(PredictionServices predServices){
 				
@@ -55,6 +58,16 @@ public class PredictionPanel extends JPanel{
 		fc = new JFileChooser();		
 		inputTraceViewer = new TraceViewerPanel();
 		predResultPanel = new AllResultViewer();
+		
+//		try {
+//			jep = new Jep();
+//			jep.eval("import pickle");
+//			this.predServices.setJep2(jep);
+//			
+//		} catch (JepException e) {
+//			e.printStackTrace();
+//		}
+
 		
 		initComponents();		
 	}

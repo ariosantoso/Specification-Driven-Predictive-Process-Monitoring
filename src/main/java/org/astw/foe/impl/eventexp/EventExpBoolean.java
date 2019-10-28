@@ -18,6 +18,8 @@
 package org.astw.foe.impl.eventexp;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.astw.foe.EventExp;
 import org.astw.foe.EventExpComponent;
@@ -114,6 +116,11 @@ public class EventExpBoolean implements EventExp{
 	}
 
 	@Override
+	public void evaluateAggregateFunction(XTrace xtrace) throws Exception{
+		
+	}
+
+	@Override
 	public void evaluateSpecialIndex(int current, int last) {
 	}
 
@@ -121,6 +128,12 @@ public class EventExpBoolean implements EventExp{
 	public boolean evaluateGroundedFormula() throws Exception {
 
 		return this.value;
+	}
+
+	@Override
+	public Set<String> getVariables(){
+
+		return new HashSet<String>();
 	}
 
 }

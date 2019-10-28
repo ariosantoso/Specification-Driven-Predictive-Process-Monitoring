@@ -26,16 +26,21 @@ import org.astw.analyticrules.AnalyticRuleSpec;
 import org.astw.analyticrules.AnalyticRulesInstance;
 import org.astw.analyticrules.RuleSpec;
 import org.astw.util.Const;
+import org.astw.util.Const.Mode;
 import org.astw.util.Const.PredictorModelType;
 import org.astw.util.Const.SpecialOutputFormat;
 import org.astw.util.Const.ValueType;
+import org.astw.util.PythonHelper;
 import org.astw.util.encoder.AttributeEncodingInfo;
 import org.astw.util.encoder.Encoder;
-import org.astw.util.encoder.OneHotEncodingV2Info;
 import org.astw.util.encoder.Encoder.EncodingType;
+import org.astw.util.encoder.OneHotEncodingV2Info;
 import org.deckfour.xes.model.XLog;
 import org.deckfour.xes.model.XTrace;
 
+import gnu.trove.map.hash.TObjectIntHashMap;
+import jep.Jep;
+import jep.NDArray;
 import weka.classifiers.Classifier;
 import weka.core.Instances;
 
@@ -52,18 +57,35 @@ public class Predictor {
 	
 	private AnalyticRuleSpec analRule = null;
 	private PredictorModelType predModelType = PredictorModelType.RandomForest; //the default is RandomForest
+	private String predModelTypePy = ""; 
 	private XLog xlog = null;
+	private Mode mode = Mode.PYTHON;
+
+	private TObjectIntHashMap<String> availableClfModelNames; 
+	private TObjectIntHashMap<String> availableRegModelNames;
+	private ArrayList<String> availableClfModelConfigs;
+	private ArrayList<String> availableRegModelConfigs;
+	
+	//private Jep jep;
+	
 	///////////////////////////////////////////////////	
 	// END OF We do not serialize these
 	///////////////////////////////////////////////////
 	
-
-	//model information
+	private String id;
+	private String modelPrefixName = "model";
+	private String modelName = modelPrefixName+id;
+	private String pyLoc = System.getProperty("user.home")+"/sdprom/";	
+	private String predictorFileName;
+	private String modelType;
+	
+	
+	//prediction model information - For Weka Mode
 	private Classifier model;
 	private ArrayList<String> classValue = new ArrayList<String>();
 	private Set<String> targetValues;
 	private SpecialOutputFormat specialOutputFormat = SpecialOutputFormat.NO_SPECIAL_FORMAT;
-	//END OF model information
+	//END OF prediction model information - For Weka Mode
 
 	//Prediction related information
 	private String predictionTaskName = "";
@@ -127,24 +149,6 @@ public class Predictor {
 	// TRAINING PHASE METHODS
 	///////////////////////////////////////////////////////////////////////////
 
-	public boolean init(XLog xlog, ArrayList<String> allAttributeNames) throws Exception{
-		
-		if(runningPhase == true)
-			throw new Exception("This method can't be called during the running phase");
-
-		
-		if(this.analRule != null){
-			analRule.init(xlog);
-			this.xlog = xlog;
-			this.initialized = true;
-			this.targetValueType = analRule.getTargetValueType();
-			this.defaultEncodingInit(xlog, allAttributeNames);
-			this.predModelType = PredictorModelType.RandomForest;
-		}
-		
-		return this.initialized;
-	}
-	
 	public void defaultEncodingInit(XLog xlog, ArrayList<String> allAttributeNames){
 		
 		//Choose Encoding Type
@@ -173,8 +177,41 @@ public class Predictor {
 		if(this.analRule != null)
 			this.analRule.addRuleSpec(ruleSpec);
 	}
+
 	
-	public void buildPredictor() throws Exception{
+	
+	//---------------------------------------------------------------------------
+	//for the weka mode
+	//---------------------------------------------------------------------------
+	
+	public boolean initWekaMode(XLog xlog, ArrayList<String> allAttributeNames) throws Exception{
+		
+		if(runningPhase == true)
+			throw new Exception("This method can't be called during the running phase");
+
+		this.mode = Mode.WEKA;
+
+		
+		if(this.analRule != null){
+
+			//the usual initialization of the analytic rule specification
+			analRule.init(xlog);
+			
+			this.xlog = xlog;
+			this.targetValueType = analRule.getTargetValueType();//get target value type (numeric or non-numeric)
+			
+			//init the default encoding (just in case the user does not want to choose the desired encoding)
+			this.defaultEncodingInit(xlog, allAttributeNames);
+
+			this.predModelType = PredictorModelType.RandomForest;//just set the default model (in case the user doesn't choose)
+
+			this.initialized = true;
+		}
+		
+		return this.initialized;
+	}
+
+	public void buildPredictorWekaMode() throws Exception{
 		
 		if(runningPhase == true)
 			throw new Exception("This method can't be called during the running phase");
@@ -188,6 +225,10 @@ public class Predictor {
 		this.model.buildClassifier(trainingInstances);
 		
 		if(this.targetValueType == Const.ValueType.NON_NUMERIC_EXP){
+			//this is just to get the mapping between the 'number' that represents a 
+			//particular class and the corresponding class name. This will be needed when we do the prediction
+			//since the output of the prediction is only the number of the class. Hence, we need to decode it back
+			//into the categorical name
 			
 			int numOfClass = trainingInstances.classAttribute().numValues();
 			
@@ -221,6 +262,217 @@ public class Predictor {
 		//////////////////////////////
 	}
 
+	//---------------------------------------------------------------------------
+	//END OF for the weka mode
+	//---------------------------------------------------------------------------
+
+	
+
+	//---------------------------------------------------------------------------
+	//for the python mode
+	//---------------------------------------------------------------------------
+
+	public boolean initPyMode(XLog xlog, ArrayList<String> allAttributeNames, String id,
+			TObjectIntHashMap<String> availableClfModelNames, TObjectIntHashMap<String> availableRegModelNames,
+			ArrayList<String> availableClfModelConfigs, ArrayList<String> availableRegModelConfigs) throws Exception{
+		
+		if(runningPhase == true)
+			throw new Exception("This method can't be called during the running phase");
+
+		this.mode = Mode.PYTHON;
+		this.id = id;
+		//this.jep = jep;
+		this.availableClfModelNames = availableClfModelNames;
+		this.availableRegModelNames = availableRegModelNames;
+		this.availableClfModelConfigs = availableClfModelConfigs; 
+		this.availableRegModelConfigs = availableRegModelConfigs; 
+		
+		if(this.analRule != null){
+			
+			//the usual initialization of the analytic rule specification
+			analRule.init(xlog);
+			
+			this.xlog = xlog;
+			this.targetValueType = analRule.getTargetValueType();//get target value type (numeric or non-numeric)
+			
+			//init the default encoding (just in case the user does not want to choose the desired encoding)
+			this.defaultEncodingInit(xlog, allAttributeNames);
+
+			//Set the default model (in case the user doesn't choose)
+			if(this.targetValueType == ValueType.NON_NUMERIC_EXP){
+				
+				this.predModelTypePy = this.availableClfModelNames.keySet().iterator().next();
+				
+			}else if(this.targetValueType == ValueType.NUMERIC_EXP){
+				
+				this.predModelTypePy = this.availableRegModelNames.keySet().iterator().next();
+				
+			}else{
+				throw new Exception("Invalid Analytic Rule Specification");
+			}
+			
+			this.initialized = true;
+		}
+		
+		return this.initialized;
+	}
+
+	public void buildPredictorPyMode(Jep jep) throws Exception{
+		
+		if(runningPhase == true)
+			throw new Exception("This method can't be called during the running phase");
+		
+		//System.out.println("buildPredictorPyMode");
+		
+		//Build the training instance
+		String trainInstanceCodeName = predModelTypePy+"-"+System.currentTimeMillis();
+		AnalyticRulesInstance ari = this.analRule.computeAnalyticRulesInstanceAllPrefixLength(2, this.xlog);
+		Instances trainingInstances = 
+			ari.computeWEKAInstances(trainInstanceCodeName, encodingType, oneHotEncodingV2Info, attEncodingInfo);
+
+		//set the value of the variable 'nr_features'
+		jep.set("nr_features", trainingInstances.numAttributes() - 1);
+
+		//System.out.println("buildPredictorPyMode: "+trainInstanceCodeName);
+
+		if(this.targetValueType == Const.ValueType.NON_NUMERIC_EXP){//Build Classifier
+
+			//System.out.println("buildPredictorPyMode - NON_NUMERIC_EXP ");
+
+			// convert training data for Python
+			long[] featuresTrain = PythonHelper.getFeaturesFromInstances(trainingInstances);
+			String[] targetTrain = PythonHelper.getNominalTargetFromInstances(trainingInstances);
+			NDArray<long[]> ndFeatures = new NDArray<>(featuresTrain, trainingInstances.numInstances(), 
+															trainingInstances.numAttributes() - 1);
+
+			//System.out.println("buildPredictorPyMode - END prepare data for python");
+
+			String modelConfig = this.availableClfModelConfigs.get(this.availableClfModelNames.get(this.predModelTypePy));
+			this.modelName = modelPrefixName+this.id;
+
+			//System.out.println("buildPredictorPyMode - Build the model");
+
+			//Build the model
+			System.out.println("\n------------------------------------------------------------------------------------------------------");
+			System.out.println("Training: "+modelConfig+"\n(Please wait! Depending on the model and the data, it may take some times)");
+			jep.set("training", ndFeatures);
+			jep.set("target", targetTrain);
+			jep.eval(modelName+" = "+modelConfig);
+		    jep.eval(modelName+".fit(training, target)");			
+			this.targetValues = ari.getAllPossibleTargetValue(); //needed for input encoding in the predictor
+
+			//System.out.println("buildPredictorPyMode - Save the model");
+			//save the model
+			this.modelType = (String) jep.getValue("type("+modelName+").__name__");
+			this.predictorFileName = pyLoc + modelName +"x"+ System.currentTimeMillis()+".sav";
+
+			if(this.modelType.equals("KerasClassifier")){
+				
+				//if type(model).__name__ == 'KerasClassifier':
+		        //model.model.save(outputModelFile + m[0]+ '.hd5')
+				this.predictorFileName += ".hd5";
+		    	jep.eval(modelName+".model.save('"+this.predictorFileName+"', 'wb')");
+		    	
+		    	
+		    	//save the mapping between the class number and the class label name
+			    jep.eval("target_classes = "+modelName+".classes_.tolist()");
+			    this.classValue = (ArrayList<String>)jep.getValue("target_classes");
+			    //System.out.println("jep.getValue(\"target_classes\"): "+jep.getValue("target_classes"));
+			    //System.out.println("jep.getValue(\"type(target_classes)\"): "+jep.getValue("type(target_classes)"));
+			    //System.out.println("this.classValue: "+this.classValue);
+			    
+				
+			}else jep.eval("pickle.dump("+modelName+", open('"+this.predictorFileName+"', 'wb'))");
+			
+			System.out.println("\nModel type: "+this.modelType );
+			System.out.println("Temporarily save the model at: "+this.predictorFileName);
+			System.out.println("------------------------------------------------------------------------------------------------------\n");
+
+		    //JUST DEBUGGING
+			/*
+			    jep.eval("predicted = "+modelName+".predict(training)");			
+			    System.out.println("modelName: "+modelName);
+			    System.out.println("type("+modelName+"): "+jep.getValue("type("+modelName+")"));
+			    System.out.println("len(training): "+jep.getValue("len(training)"));
+			    System.out.println("len(target): " + jep.getValue("len(target)"));
+			    System.out.println("len(predicted): " +jep.getValue("len(predicted)"));
+	
+			    int numRes = (int)((long)jep.getValue("len(predicted)"));
+			    
+			    for(int ii = 0 ; ii < numRes; ii++)
+			    	System.out.print(jep.getValue("predicted["+ii+"]")+", ");
+			    
+			    System.out.println("\n");
+			*/
+		    //END OF JUST DEBUGGING
+		    			
+		}else if(this.targetValueType == Const.ValueType.NUMERIC_EXP){//Build Regressor
+			
+			// convert training data for Python
+			long[] featuresTrain = PythonHelper.getFeaturesFromInstances(trainingInstances);
+			double[] targetTrain = PythonHelper.getNumericTargetFromInstances(trainingInstances);
+			NDArray<long[]> ndFeatures = new NDArray<>(featuresTrain, trainingInstances.numInstances(), 	
+															trainingInstances.numAttributes() - 1);
+			NDArray<double[]> ndTarget = new NDArray<>(targetTrain);
+
+			String modelConfig = this.availableRegModelConfigs.get(this.availableRegModelNames.get(this.predModelTypePy));
+			this.modelName = modelPrefixName+this.id;
+
+			//Build the model
+			System.out.println("\n------------------------------------------------------------------------------------------------------");
+			System.out.println("Training: "+modelConfig+"\n(Please wait! Depending on the model and the data, it may take some times)");
+			jep.set("training", ndFeatures);
+			jep.set("target", ndTarget);
+			jep.eval(modelName+" = "+modelConfig);
+		    jep.eval(modelName+".fit(training, target)");			
+		    
+			//save the model
+		    this.modelType = (String) jep.getValue("type("+modelName+").__name__");
+			this.predictorFileName = pyLoc + modelName +"x"+ System.currentTimeMillis()+".sav";
+			
+			if(this.modelType.equals("KerasRegressor")){
+				
+				//if type(model).__name__ == 'KerasRegressor':
+		        //model.model.save(outputModelFile + m[0]+ '.hd5')
+				this.predictorFileName += ".hd5";
+				jep.eval(modelName+".model.save('"+this.predictorFileName+"', 'wb')");
+				
+			}else jep.eval("pickle.dump("+modelName+", open('"+this.predictorFileName+"', 'wb'))");
+			
+			System.out.println("\nModelType: "+this.modelType );
+			System.out.println("Temporarily save the model at: "+this.predictorFileName);
+			System.out.println("------------------------------------------------------------------------------------------------------\n");
+		}
+		
+		//////////////////////////////
+		// JUST DEBUGGING
+		//////////////////////////////
+		/*
+		System.out.println("DEBUGA: trainingInstances.numClasses(): "+trainingInstances.numClasses());
+		System.out.println("DEBUGA: trainingInstances.classIndex(): "+trainingInstances.classIndex());
+		System.out.println("DEBUGA: trainingInstances.classAttribute(): "+trainingInstances.classAttribute());
+		System.out.println("DEBUGA: trainingInstances.classAttribute().numValues(): "+trainingInstances.classAttribute().numValues());
+		System.out.println("DEBUGA: trainingInstances.classAttribute().value(0): "+trainingInstances.classAttribute().value(0));
+		System.out.println("DEBUGA: trainingInstances.classAttribute().value(1): "+trainingInstances.classAttribute().value(1));
+		System.out.println("DEBUGA: trainingInstances.classAttribute().value(2): "+trainingInstances.classAttribute().value(2));
+
+		System.out.println("Finish building: "+this.model.toString());
+
+		Evaluation evaluation = new Evaluation(trainingInstances);
+		evaluation.evaluateModel(this.model, trainingInstances);
+		System.out.println(evaluation.toSummaryString());
+		System.out.println(evaluation.toClassDetailsString());
+		*/
+		//////////////////////////////
+		// END OF JUST DEBUGGING
+		//////////////////////////////
+	}
+
+	//---------------------------------------------------------------------------
+	//END OF for the python mode
+	//---------------------------------------------------------------------------
+
+	
 	///////////////////////////////////////////////////////////////////////////
 	// END OF TRAINING PHASE METHODS
 	///////////////////////////////////////////////////////////////////////////
@@ -231,9 +483,8 @@ public class Predictor {
 	// RUNNING PHASE METHODS
 	///////////////////////////////////////////////////////////////////////////
 	
-	public PredictionResults predict(XTrace xtrace){
-		
-		//TODO: get the prediction value
+	//For Weka Mode
+	public PredictionResults predictWk(XTrace xtrace){
 		
 		String predictionResult = "";
 		String instanceName = this.predictionTaskName+System.currentTimeMillis();
@@ -286,6 +537,208 @@ public class Predictor {
 		
 		return new PredictionResults(this.predictionTaskName, this.predictionTaskDescription, formatOutput(predictionResult));
 	}
+	
+	//For Python Mode
+	public PredictionResults predictPy(XTrace xtrace, Jep jep){
+				
+		
+//		try {
+//			this.jep.close();
+//		} catch (JepException e2) {
+//			e2.printStackTrace();
+//		}
+		
+//		Jep jep;
+//		try {
+//			System.out.println("re-init JEP");
+//			jep = new Jep();
+//			System.out.println("Finish re-init JEP");
+//			System.out.println("import pickle");
+//			jep.eval("import pickle");
+//			System.out.println("finish import pickle");
+//			
+//		} catch (Exception e1) {
+//			e1.printStackTrace();
+//			System.out.println("There is an error with the connection to Python. Program Aborted");
+//			return new PredictionResults(this.predictionTaskName, this.predictionTaskDescription, "");
+//		}		
+
+		//get the prediction value
+		String predictionResult = "";
+		String instanceName = this.predictionTaskName+System.currentTimeMillis();
+
+		//System.out.println("Before Enter Non Num Exp");
+
+		if(this.targetValueType == Const.ValueType.NON_NUMERIC_EXP){
+			//System.out.println("Enter Non Num Exp");
+
+			
+			Instances encodedTrace = Encoder.createInstancesTemplateV2(1, instanceName, encodingType, 
+					targetValues, oneHotEncodingV2Info, attEncodingInfo);
+
+			//System.out.println("Enter Non Num Exp 2");
+
+			String dummy = this.targetValues.iterator().next();
+			
+			Encoder.encodeAnXTraceV2(
+					encodedTrace, xtrace, xtrace.size(), encodingType, 
+					oneHotEncodingV2Info, attEncodingInfo, dummy);
+
+			//System.out.println("Enter Non Num Exp 3");
+			//System.out.println("DUMMY: "+dummy);
+
+			encodedTrace.setClass(encodedTrace.attribute(Encoder.ATTR_TARGET));
+
+			System.out.println("\nDoing Prediction (Please wait) . . .\n");
+
+			try {
+				//System.out.println("Transform features for Python 1");
+				
+				long[] inputFeatures = PythonHelper.getFeaturesFromInstance(encodedTrace.firstInstance());
+				
+				//System.out.println("Transform features for Python 2");
+
+				NDArray<long[]> inpFeatures = new NDArray<>(inputFeatures, 1, encodedTrace.numAttributes() - 1);
+
+				//System.out.println("END OF Transform features for Python");
+
+				//set input features
+				jep.set("inputFeatures", inpFeatures);
+
+				//System.out.println("END OF Set input features");
+
+				//load model and predict result
+				
+				
+				if(this.modelType.equals("KerasClassifier")){
+					
+					jep.eval("predictionModel = load_model('"+this.predictorFileName+"')");
+					jep.eval("predicted = predictionModel.predict_classes(inputFeatures)");	
+				    
+					/*
+				    System.out.println("jep.getValue(\"predicted\"): "+jep.getValue("predicted"));
+				    System.out.println("jep.getValue(\"type(predicted)\"): "+jep.getValue("type(predicted)"));
+				    System.out.println("jep.getValue(\"predicted[0]\"): "+jep.getValue("predicted[0]"));
+				    System.out.println("jep.getValue(\"type(predicted[0])\"): "+jep.getValue("type(predicted[0])"));
+				    System.out.println("jep.getValue(\"predicted.tolist()\"): "+jep.getValue("predicted.tolist()"));
+				    System.out.println("jep.getValue(\"type(predicted.tolist())\"): "+jep.getValue("type(predicted.tolist())"));
+				    System.out.println("jep.getValue(\"predicted.tolist()[0]\"): "+jep.getValue("predicted.tolist()[0]"));
+				    System.out.println("jep.getValue(\"type(predicted.tolist()[0])\"): "+jep.getValue("type(predicted.tolist()[0])"));
+				    System.out.println("jep.getValue(\"predicted.tolist()[0][0]\"): "+jep.getValue("predicted.tolist()[0][0]"));
+				    System.out.println("jep.getValue(\"type(predicted.tolist()[0][0])\"): "+jep.getValue("type(predicted.tolist()[0][0])"));
+				    
+				    predictionResult = ((ArrayList) jep.getValue("predicted.tolist()[0]")).get(0).toString();
+				    predictionResult = ""+((long) jep.getValue("predicted.tolist()[0][0]"));
+				    */
+					
+				    long classIdx = ((long) jep.getValue("predicted.tolist()[0][0]"));
+				    predictionResult = this.classValue.get(Integer.parseInt(classIdx+""));
+				    
+				}else{
+					
+					//System.out.println("exec -> "+"predictionModel = pickle.load(open('"+this.predictorFileName+"', 'rb'))");
+					jep.eval("predictionModel = pickle.load(open('"+this.predictorFileName+"', 'rb'))");
+					jep.eval("predicted = predictionModel.predict(inputFeatures)");	
+				    predictionResult = (String) jep.getValue("predicted[0]");
+				}
+				
+				//System.out.println("END OF Predict");
+
+
+				//System.out.println("END OF get predict result");
+
+			    //JUST DEBUGGING
+			    /*
+			    System.out.println("Predictor DEBUGGING - modelName: "+modelName);
+			    System.out.println("Predictor DEBUGGING - type("+modelName+"): "+jep.getValue("type("+modelName+")"));
+			    System.out.println("Predictor DEBUGGING - len(predicted): " +jep.getValue("len(predicted)"));
+
+			    int numRes = (int)((long)jep.getValue("len(predicted)"));
+			    for(int ii = 0 ; ii < numRes; ii++)
+			    	System.out.println("Predictor DEBUGGING - prediction result: "+jep.getValue("predicted["+ii+"]"));
+			    */
+			    //END OF JUST DEBUGGING
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}finally{
+				
+				System.out.println("\n. . .Done \n");
+
+			}
+			
+		}else if(this.targetValueType == Const.ValueType.NUMERIC_EXP){
+			
+			//Create the template for the WEKA Instances
+			Instances encodedTrace = Encoder.createInstancesTemplateNumericTarget(
+					1, instanceName, encodingType, oneHotEncodingV2Info, attEncodingInfo);
+
+			Encoder.encodeAnXTraceNumericTarget(
+					encodedTrace, xtrace, xtrace.size(), encodingType, 
+					oneHotEncodingV2Info, attEncodingInfo, 0);
+				
+			encodedTrace.setClass(encodedTrace.attribute(Encoder.ATTR_TARGET));
+
+			System.out.println("\nDoing Prediction (Please wait) . . .\n");
+
+			try {
+				
+				long[] inputFeatures = PythonHelper.getFeaturesFromInstance(encodedTrace.firstInstance());
+				NDArray<long[]> inpFeatures = new NDArray<>(inputFeatures, 1, encodedTrace.numAttributes() - 1);
+
+				//set input features
+				jep.set("inputFeatures", inpFeatures);
+				
+				//load model and predict result
+				if(this.modelType.equals("KerasRegressor")){
+				
+					jep.eval("predictionModel = load_model('"+this.predictorFileName+"')");
+				    jep.eval("predicted = predictionModel.predict(inputFeatures)");	
+				    
+				    /*
+				    System.out.println("jep.getValue(\"predicted\"): "+jep.getValue("predicted"));
+				    System.out.println("jep.getValue(\"type(predicted)\"): "+jep.getValue("type(predicted)"));
+				    System.out.println("jep.getValue(\"predicted[0]\"): "+jep.getValue("predicted[0]"));
+				    System.out.println("jep.getValue(\"type(predicted[0])\"): "+jep.getValue("type(predicted[0])"));
+				    System.out.println("jep.getValue(\"predicted.tolist()\"): "+jep.getValue("predicted.tolist()"));
+				    System.out.println("jep.getValue(\"type(predicted.tolist())\"): "+jep.getValue("type(predicted.tolist())"));
+				    System.out.println("jep.getValue(\"predicted.tolist()[0]\"): "+jep.getValue("predicted.tolist()[0]"));
+				    System.out.println("jep.getValue(\"type(predicted.tolist()[0])\"): "+jep.getValue("type(predicted.tolist()[0])"));
+				    System.out.println("jep.getValue(\"predicted.tolist()[0][0]\"): "+jep.getValue("predicted.tolist()[0][0]"));
+				    System.out.println("jep.getValue(\"type(predicted.tolist()[0][0])\"): "+jep.getValue("type(predicted.tolist()[0][0])"));
+				    
+				    predictionResult = ((ArrayList) jep.getValue("predicted.tolist()[0]")).get(0).toString();
+				    */
+				    
+				    predictionResult = ""+((double) jep.getValue("predicted.tolist()[0][0]"));
+				
+				}else {
+					
+					jep.eval("predictionModel = pickle.load(open('"+this.predictorFileName+"', 'rb'))");
+				    jep.eval("predicted = predictionModel.predict(inputFeatures)");	
+				    predictionResult = ""+(double) jep.getValue("predicted[0]");
+				}
+				
+
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}finally{
+				
+				System.out.println("\n. . .Done \n");
+
+			}
+		} 
+
+//		try {
+//			jep.close();
+//		} catch (JepException e) {
+//			e.printStackTrace();
+//		}
+		
+		return new PredictionResults(this.predictionTaskName, this.predictionTaskDescription, formatOutput(predictionResult));
+	}
+	
 
 	///////////////////////////////////////////////////////////////////////////
 	// END OF RUNNING PHASE METHODS
@@ -294,7 +747,7 @@ public class Predictor {
 	
 	public String formatOutput(String output){
 		
-		System.out.println("result asli: "+output);
+		//System.out.println("result asli: "+output);
 		
 		try{
 		
@@ -377,6 +830,14 @@ public class Predictor {
 		this.predModelType = predModelType;
 	}
 
+	public String getPredModelTypePy() {
+		return predModelTypePy;
+	}
+
+	public void setPredModelTypePy(String predModelTypePy) {
+		this.predModelTypePy = predModelTypePy;
+	}
+
 	public EncodingType[] getEncodingType() {
 		return encodingType;
 	}
@@ -407,8 +868,23 @@ public class Predictor {
 	
 	public XLog getXlog() {
 		return xlog;
-	}	
-		
+	}
+
+
+
+	public Set<String> getAvailableClfModelNames() {
+		return availableClfModelNames.keySet();
+	}
+
+	public Set<String> getAvailableRegModelNames() {
+		return availableRegModelNames.keySet();
+	}
+
+	public Mode getMode() {
+		return mode;
+	}
+
+	
 	///////////////////////////////////////////////////////////////////////////
 	// END OF SETTER & GETTER
 	///////////////////////////////////////////////////////////////////////////

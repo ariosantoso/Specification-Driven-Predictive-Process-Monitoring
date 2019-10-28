@@ -18,6 +18,8 @@
 package org.astw.foe.impl.numeric.indexexp;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.astw.foe.IndexExp;
 import org.astw.util.Const;
@@ -56,7 +58,7 @@ public class IndexExpNum implements IndexExp{
 		this.component = component;
 	}
 	
-	public int getValue(){
+	public int getIdxValue(){
 		return this.component;
 	}
 	
@@ -99,7 +101,7 @@ public class IndexExpNum implements IndexExp{
 	}
 	@Override
 	public double getNumericValue() {
-		return this.getValue();
+		return this.getIdxValue();
 	}
 
 	@Override
@@ -111,6 +113,10 @@ public class IndexExpNum implements IndexExp{
 	}
 
 	@Override
+	public void evaluateAggregateFunction(XTrace xtrace) throws Exception{
+	}
+
+	@Override
 	public void evaluateSpecialIndex(int current, int last) {
 	}
 
@@ -119,4 +125,11 @@ public class IndexExpNum implements IndexExp{
 
 		return XESDataType.XES_INT;
 	}
+	
+	@Override
+	public Set<String> getVariables(){
+
+		return new HashSet<String>();
+	}
+
 }

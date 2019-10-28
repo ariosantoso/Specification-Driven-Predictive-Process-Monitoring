@@ -52,7 +52,7 @@ import org.deckfour.xes.model.XLog;
  * @author Ario Santoso (santoso.ario@gmail.com)
  * @author Yasmin Khairina (yasminkhairina08@gmail.com)
  */
-
+@Deprecated
 public class ModelConfigFrame extends JFrame {
 
 	private ArrayList<String> attributes = new ArrayList<String>();

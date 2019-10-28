@@ -18,6 +18,11 @@
 package org.astw.util;
 
 import java.sql.Timestamp;
+import java.util.Calendar;
+import java.util.Locale;
+
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 /**
  * 
@@ -31,4 +36,54 @@ public class Util {
 		
 		return new Timestamp(System.currentTimeMillis()).toString();
 	}
+	
+	////////////////////////////////////////////////////////////
+	//Time related methods
+	////////////////////////////////////////////////////////////	
+	
+	public static long timeDiff(String ts1, String ts2) {
+		DateTime dt1 = DateTime.parse(ts1);
+		DateTime dt2 = DateTime.parse(ts2);
+		return Math.abs(dt1.getMillis() - dt2.getMillis());
+	}
+	
+	public static long timeDiffSinceMidnight(String ts1) {
+		DateTime dt = DateTime.parse(ts1);
+		DateTime dtMidnight = dt.withTime(0, 0, 0, 0);
+		return dt.getMillis() - dtMidnight.getMillis();
+	}
+	
+	public static long timeDiffSinceFirstDayOfTheWeek(String ts1) {
+		Locale usersLocale = Locale.getDefault();
+		DateTime dt = DateTime.parse(ts1);
+		LocalDate localDate = dt.toLocalDate();
+		int firstDoW = Calendar.getInstance(usersLocale).getFirstDayOfWeek();
+		
+		// because the constant in Calendar starts from Sunday = 1, 
+		// and the constant in Joda starts from Monday = 1
+		if (firstDoW == Calendar.SUNDAY)
+			firstDoW = 7;
+		else
+			firstDoW = firstDoW - 1;
+		
+		// get the day of week from our timestamp
+		int ourDoW = dt.dayOfWeek().get();
+		
+		// get the difference of the day
+		int diffToDoW = ourDoW - firstDoW;
+		if (ourDoW < firstDoW) {
+			diffToDoW += 7;
+		}
+		
+		// now construct the date from the info we have
+		DateTime temp = dt.minusDays(diffToDoW);
+		DateTime dow = temp.withTime(0, 0, 0, 0);
+		
+		return dt.getMillis() - dow.getMillis();
+	}
+
+	////////////////////////////////////////////////////////////
+	//END OF Time related methods
+	////////////////////////////////////////////////////////////	
+
 }

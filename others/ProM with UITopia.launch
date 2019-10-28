@@ -20,6 +20,6 @@
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="org.processmining.contexts.uitopia.UI"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="Specification-Driven-Predictive-Process-Monitoring"/>
 <stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.m2e.launchconfig.sourcepathProvider"/>
-<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-ea -Xmx1G -Djava.library.path=.//lib;.//stdlib"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-ea -Xmx1G -Djava.library.path=.//lib;.//stdlib:/Users/arsa/Library/Java/Extensions"/>
 <stringAttribute key="yk-options" value="&#13;&#10;additional-options=&#13;&#10;snapshots-dir=&#13;&#10;"/>
 </launchConfiguration>

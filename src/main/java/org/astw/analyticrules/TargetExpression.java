@@ -26,9 +26,21 @@ import org.deckfour.xes.model.XTrace;
 public interface TargetExpression {
 
 	public TargetExpression clone();
+	/**
+	 * Assign the corresponding XES Data Type to each AttributeAccessor 
+	 */
 	public void assignQueryXESDataType(HashMap<String, XESDataType> attributeNamesAndTypes) throws Exception;
-	public void evaluateSpecialIndex(int current, int last);
+
+	//evaluate the queries/attribute accessors
 	public void evaluateQuery(XTrace xtrace) throws Exception;
+
+	//evaluate the special indices (i.e., CURR and LAST) with the concrete values
+	public void evaluateSpecialIndex(int current, int last);
+
+	
+	//evaluate the aggregate functions
+	public void evaluateAggregateFunction(XTrace xtrace) throws Exception;
+
 	public ValueType getValueType();
 
 }

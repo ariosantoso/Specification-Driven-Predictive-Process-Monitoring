@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import javax.swing.JPanel;
 
 import org.astw.promplugin.Predictor;
+import org.astw.util.Const.Mode;
 import org.astw.util.Const.PredictorModelType;
 import org.astw.util.Const.SpecialOutputFormat;
 import org.astw.util.Const.ValueType;
@@ -66,7 +67,7 @@ public class PredictorConfigPanel extends JPanel{
     	boolean isNumeric = (valType == ValueType.NUMERIC_EXP? true : false);
     	
     	//show the config frame
-    	ModelConfigFrame2 mcf = new ModelConfigFrame2(isNumeric, this.allAttributeNames, this.pred.getXlog(), this);
+    	ModelConfigFrame2 mcf = new ModelConfigFrame2(isNumeric, this.allAttributeNames, this, this.pred);
     	mcf.setVisible(true);
     }                        
     
@@ -75,6 +76,7 @@ public class PredictorConfigPanel extends JPanel{
 	    	OneHotEncodingV2Info[] oneHotEncodingV2Info, 
 	    	AttributeEncodingInfo[] attEncodingInfo,
 	    	PredictorModelType predModelType,
+	    	String predModelTypePy,
 	    	SpecialOutputFormat specialOutputFormat){
     	
     	if(encodingType != null)
@@ -86,8 +88,15 @@ public class PredictorConfigPanel extends JPanel{
     	if(oneHotEncodingV2Info != null)
     		this.pred.setOneHotEncodingV2Info(oneHotEncodingV2Info);
     	
-    	if(predModelType != null)
-    		this.pred.setPredModelType(predModelType);
+    	//Handling model choice
+        //if(this.pred.getMode() == Mode.PYTHON){//python mode
+        	if(predModelTypePy != null)
+        		this.pred.setPredModelTypePy(predModelTypePy);        	
+        //}else{//should be weka mode
+        	if(predModelType != null)
+        		this.pred.setPredModelType(predModelType);        	
+        //}
+    	//END OF Handling model choice
     	
     	if(specialOutputFormat != null)
     		this.pred.setSpecialOutputFormat(specialOutputFormat);
@@ -109,8 +118,11 @@ public class PredictorConfigPanel extends JPanel{
 				if(ae != null)
 					System.out.println(ae.toString());
 
-		if(this.pred.getPredModelType() != null)
+		if(this.pred.getPredModelType() != null && this.pred.getMode() == Mode.WEKA)
 			System.out.println(this.pred.getPredModelType().toString());
+
+		if(this.pred.getPredModelTypePy() != null && this.pred.getMode() == Mode.PYTHON)
+			System.out.println(this.pred.getPredModelTypePy().toString());
 
 		if(this.pred.getSpecialOutputFormat() != null)
 			System.out.println(this.pred.getSpecialOutputFormat());
@@ -119,6 +131,7 @@ public class PredictorConfigPanel extends JPanel{
 
 
     //old version
+    @Deprecated
     public void updateConfig(
 	    	EncodingType[] encodingType, 
 	    	OneHotEncodingV2Info[] oneHotEncodingV2Info, 
@@ -157,10 +170,8 @@ public class PredictorConfigPanel extends JPanel{
 
 		if(this.pred.getPredModelType() != null)
 			System.out.println(this.pred.getPredModelType().toString());
-
-
     }
-
+    
 
 	//////////////////////////////////////////////////////////////////////////////
 	// NetBeans Generated

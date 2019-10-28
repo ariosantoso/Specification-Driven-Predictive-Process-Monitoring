@@ -12,6 +12,11 @@ import org.astw.foe.impl.numeric.indexexp.*;
 import org.astw.*;
 import org.astw.util.*;
 import org.astw.util.Const;
+import org.astw.parser.numConditionalAggregation.*;
+import org.astw.parser.nonNumConditinoalAggregation.*;
+
+import java.util.*;
+
 
 
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -132,6 +137,18 @@ public class FOEBaseListener implements FOEListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitQueryNumeric(FOEParser.QueryNumericContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterRealNumber(FOEParser.RealNumberContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitRealNumber(FOEParser.RealNumberContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

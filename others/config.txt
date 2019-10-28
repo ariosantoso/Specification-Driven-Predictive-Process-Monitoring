@@ -1,3 +1,0 @@
-/Volumes/COMMON/PRD/LOG/BPI13/
-/Volumes/COMMON/PRD/LOG/BPI13/OUT/
-bpi_challenge_2013_incidents.xes

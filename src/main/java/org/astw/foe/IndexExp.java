@@ -28,7 +28,7 @@ import org.astw.util.Const.XESDataType;
 
 public interface IndexExp extends NumExp{
 
-	public int getValue();
+	public int getIdxValue();
 	
 	////////////////////////////////////////////////////////////////////////////////
 	// Common shared method

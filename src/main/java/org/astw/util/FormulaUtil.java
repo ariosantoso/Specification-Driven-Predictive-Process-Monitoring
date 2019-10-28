@@ -119,6 +119,13 @@ public class FormulaUtil {
 		return f;
 	}
 
+	public static Formula evaluateAggregateFunction(Formula formula, XTrace xtrace) throws Exception{
+
+		Formula f = formula.clone();
+		f.evaluateAggregateFunction(xtrace);
+		return f;
+	}
+
 	/**
 	 * Evaluate the truth value of the formula w.r.t. the given trace
 	 * 
@@ -146,6 +153,10 @@ public class FormulaUtil {
 		Formula f3 = FormulaUtil.evaluateQuery(f2, xtrace);
 //		System.out.println("After Evaluating the Queries: \n"+f3.prettyFormat(""));
 		
-		return f3.evaluateGroundedFormula();
+		
+		//Evaluate the aggregate functions
+		Formula f4 = FormulaUtil.evaluateAggregateFunction(f3, xtrace);
+		
+		return f4.evaluateGroundedFormula();
 	}
 }

@@ -18,6 +18,7 @@
 package org.astw.foe.impl.frm;
 
 import java.util.HashMap;
+import java.util.Set;
 
 import org.astw.foe.Formula;
 import org.astw.util.Const;
@@ -115,6 +116,12 @@ public abstract class FormulaBinary implements Formula{
 		this.component2.evaluateQuery(xtrace);
 	}
 
+	@Override
+	public void evaluateAggregateFunction(XTrace xtrace) throws Exception{
+		
+		this.component1.evaluateAggregateFunction(xtrace);
+		this.component2.evaluateAggregateFunction(xtrace);
+	}
 
 	@Override
 	public void evaluateSpecialIndex(int current, int last) {
@@ -122,4 +129,16 @@ public abstract class FormulaBinary implements Formula{
 		this.component1.evaluateSpecialIndex(current, last);
 		this.component2.evaluateSpecialIndex(current, last);
 	}
+	
+	@Override
+	public Set<String> getVariables(){
+		
+		Set<String> comp1Vars = this.component1.getVariables();
+		Set<String> comp2Vars = this.component2.getVariables();
+		
+		comp1Vars.addAll(comp2Vars);
+		
+		return comp1Vars;
+	}
+
 }

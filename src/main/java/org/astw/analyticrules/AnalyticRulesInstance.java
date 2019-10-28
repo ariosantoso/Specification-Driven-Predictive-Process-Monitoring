@@ -18,18 +18,20 @@
 package org.astw.analyticrules;
 
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.astw.util.Const;
-import org.astw.util.XESUtil;
 import org.astw.util.Const.ValueType;
+import org.astw.util.XESUtil;
 import org.astw.util.encoder.AttributeEncodingInfo;
 import org.astw.util.encoder.Encoder;
-import org.astw.util.encoder.OneHotEncodingV2Info;
 import org.astw.util.encoder.Encoder.EncodingType;
+import org.astw.util.encoder.OneHotEncodingV2Info;
 import org.deckfour.xes.model.XLog;
 
+import weka.core.Instance;
 import weka.core.Instances;
 
 /**
@@ -180,7 +182,60 @@ public class AnalyticRulesInstance {
 		}
 		
 		wekaInstances.setClass(wekaInstances.attribute(Encoder.ATTR_TARGET));
+
 		
+		
+		//========================================================================================
+		//DEBUGGING
+		//========================================================================================
+		
+//		System.out.println("==================================================================");
+//		System.out.println("wekaInstances.toSummaryString(): "+wekaInstances.toSummaryString());
+//		System.out.println("wekaInstances.classIndex(): "+wekaInstances.classIndex());
+//		System.out.println("wekaInstances.numClasses(): "+wekaInstances.numClasses());
+//		System.out.println("wekaInstances.numInstances(): "+wekaInstances.numInstances());
+//		System.out.println("wekaInstances.relationName(): "+wekaInstances.relationName());
+//		System.out.println("wekaInstances.classAttribute(): "+wekaInstances.classAttribute());
+//		System.out.println("wekaInstances.classAttribute().name(): "+wekaInstances.classAttribute().name());
+//		System.out.println("wekaInstances.classAttribute().numValues(): "+wekaInstances.classAttribute().numValues());
+//		System.out.println("wekaInstances.classAttribute().isNominal(): "+wekaInstances.classAttribute().isNominal());
+//		System.out.println("wekaInstances.classAttribute().isNumeric(): "+wekaInstances.classAttribute().isNumeric());
+//		
+//		System.out.println("wekaInstances.classAttribute().enumerateValues(): ");
+//		Enumeration e = wekaInstances.classAttribute().enumerateValues();
+//		int ii = 1;
+//		while(e.hasMoreElements())
+//			System.out.println("wekaInstances.classAttribute().enumerateValues() "+ ii++ +": "+e.nextElement());
+//		
+//		System.out.println("----------------------------------------------------------------------");
+//		
+//		Instance wi = wekaInstances.get(0);
+//		
+//		System.out.println("wi.toString(): "+wi.toString());
+//		System.out.println("wi.toStringNoWeight(): "+wi.toStringNoWeight());
+//		System.out.println("wi.classIndex(): "+wi.classIndex());
+//		System.out.println("wi.numClasses(): "+wi.numClasses());
+//		System.out.println("wi.numValues(): "+wi.numValues());
+//		System.out.println("wi.numAttributes(): "+wi.numAttributes());
+//		System.out.println("wi.weight(): "+wi.weight());
+//		System.out.println("wi.classIndex(): "+wi.classIndex());
+//		System.out.println("wi.classValue(): "+wi.classValue());
+//		System.out.println("wi.stringValue(wi.classIndex()): "+wi.stringValue(wi.classIndex()));
+//		System.out.println("wi.classAttribute(): "+wi.classAttribute());
+//		System.out.println("wi.toDoubleArray(): "+wi.toDoubleArray());
+//		
+//		double[] dwi = wi.toDoubleArray();
+//		
+//		for(int jj = 0; jj < dwi.length; jj++)
+//			System.out.println("double array of wi - index = "+jj+" - value = "+dwi[jj]);
+//		
+//		System.out.println("==================================================================");
+	
+		//========================================================================================
+		//END OF DEBUGGING
+		//========================================================================================
+
+	
 		return wekaInstances;
 	}
 

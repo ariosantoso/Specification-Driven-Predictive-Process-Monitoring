@@ -17,6 +17,8 @@
  *******************************************************************************/
 package org.astw.foe.impl.numeric;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.astw.foe.NumExp;
 import org.astw.util.Const;
@@ -69,7 +71,7 @@ public class BracketNumExp implements NumExp{
 	@Override
 	public ValueType ensureTypeCorrectness() throws Exception {
 
-		return this.ensureTypeCorrectness();
+		return this.component.ensureTypeCorrectness();
 	}
 
 	@Override
@@ -96,6 +98,12 @@ public class BracketNumExp implements NumExp{
 	}
 
 	@Override
+	public void evaluateAggregateFunction(XTrace xtrace) throws Exception{
+		
+		this.component.evaluateAggregateFunction(xtrace);
+	}
+
+	@Override
 	public void evaluateSpecialIndex(int current, int last) {
 
 		this.component.evaluateSpecialIndex(current, last);
@@ -107,5 +115,10 @@ public class BracketNumExp implements NumExp{
 		return this.component.getXESDataType();
 	}
 
-	
+	@Override
+	public Set<String> getVariables(){
+		
+		return this.component.getVariables();
+	}
+
 }

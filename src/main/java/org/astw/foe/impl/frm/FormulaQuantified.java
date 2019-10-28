@@ -18,6 +18,7 @@
 package org.astw.foe.impl.frm;
 
 import java.util.HashMap;
+import java.util.Set;
 
 import org.astw.foe.Formula;
 import org.astw.util.Const.XESDataType;
@@ -75,6 +76,11 @@ public abstract class FormulaQuantified implements Formula{
 		this.getComponent().evaluateQuery(xtrace);
 	}
 
+	@Override
+	public void evaluateAggregateFunction(XTrace xtrace) throws Exception{
+		
+		this.getComponent().evaluateAggregateFunction(xtrace);
+	}
 
 	@Override
 	public void evaluateSpecialIndex(int current, int last) {
@@ -86,6 +92,12 @@ public abstract class FormulaQuantified implements Formula{
 	public boolean evaluateGroundedFormula() throws Exception {
 		
 		throw new Exception("This method is only for evaluating a grounded formula!");
+	}
+
+	@Override
+	public Set<String> getVariables(){
+				
+		return this.getComponent().getVariables();
 	}
 
 }

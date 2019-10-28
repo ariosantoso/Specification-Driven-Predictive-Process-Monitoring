@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
+import org.astw.util.Util;
 import org.astw.util.XESUtil;
 import org.deckfour.xes.model.XAttribute;
 import org.deckfour.xes.model.XEvent;
@@ -197,12 +198,44 @@ public class Encoder {
 			}
 		}
 		
+		//==================================================================================
+		
 		//Add the target class  OF TYPE STRING!!
 		ArrayList<String> l = new ArrayList<String>();
-		for(String targetVal: allPossibleTargetClassValues)
+		for(String targetVal: allPossibleTargetClassValues){
+			//System.out.println("Encoder - prepare target class - Val: "+targetVal);			
 			l.add(targetVal);
+		}
 		attrList.add(new Attribute(ATTR_TARGET, l));
 
+		//==================================================================================
+		
+		//Add the target class  OF TYPE STRING!!
+//		ArrayList<String> l = new ArrayList<String>();
+//		ArrayList<String> tarVal = new ArrayList<String>();
+//		
+//		for(String targetVal: allPossibleTargetClassValues){
+//
+//			//System.out.println("Encoder - prepare target class - Val: "+targetVal);
+//			tarVal.add(targetVal);
+//		}
+//		
+//		
+////		System.out.println("Encoder - add target class - tarVal.get(0): "+tarVal.get(0));
+////		l.add(tarVal.get(0));
+////		System.out.println("Encoder - add target class - tarVal.get(1): "+tarVal.get(1));
+////		l.add(tarVal.get(1));
+//
+//		System.out.println("Encoder - add target class - tarVal.get(1): "+tarVal.get(1));
+//		l.add(tarVal.get(1));
+//		System.out.println("Encoder - add target class - tarVal.get(0): "+tarVal.get(0));
+//		l.add(tarVal.get(0));
+//
+//		attrList.add(new Attribute(ATTR_TARGET, l));
+
+		//==================================================================================
+		
+		
 		
 		return new Instances(instancesName, attrList, totalTraces);
 	}
@@ -388,7 +421,7 @@ public class Encoder {
 			
 		}
 
-		//Buat masukin class attribute value
+		//adding class attribute value
 		Attribute a = instances.attribute(ATTR_TARGET);
 		i.setValue(a, targetClassValue);
 
@@ -434,7 +467,7 @@ public class Encoder {
 			
 		}
 
-		//Buat masukin class attribute value
+		//adding class attribute value
 		Attribute a = instances.attribute(ATTR_TARGET);
 		i.setValue(a, targetClassValue);
 
@@ -529,7 +562,7 @@ public class Encoder {
 	// one hot encoding V2
 	///////////////////////////////////////////////////////	
 	
-	//buat dapetin nama2 attribute buat WEKA instance
+	//to get the attribute names for the WEKA instance
 	public static ArrayList<Attribute> getOneHotV2AttributeList(OneHotEncodingV2Info oneHotInfo) {
 		
 		String oneHotAttPrefName = oneHotInfo.getWekaAttName(); 
@@ -732,10 +765,10 @@ public class Encoder {
 		long ts = 0l;
 		String wekaAttrName = null;
 		if (encodingType == EncodingType.TimeSinceMidnight) {
-			ts = XESUtil.timeDiffSinceMidnight(timeStr);
+			ts = Util.timeDiffSinceMidnight(timeStr);
 			wekaAttrName = ATTR_TIME_SINCE_MIDNIGHT;
 		} else {
-			ts = XESUtil.timeDiffSinceFirstDayOfTheWeek(timeStr);
+			ts = Util.timeDiffSinceFirstDayOfTheWeek(timeStr);
 			wekaAttrName = ATTR_TIME_SINCE_FDOW;
 		}
 		
@@ -783,7 +816,7 @@ public class Encoder {
 			if(consideredPrefixLength > 1){
 				XEvent ev2 = xtrace.get(consideredPrefixLength - 2);
 				ts2 = ev2.getAttributes().get(xesAttributeName).toString();
-				ts = XESUtil.timeDiff(ts1, ts2);
+				ts = Util.timeDiff(ts1, ts2);
 			}
 			
 		} 

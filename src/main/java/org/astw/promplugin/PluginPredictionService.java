@@ -29,12 +29,13 @@ import org.processmining.framework.plugin.annotations.Plugin;
 import org.processmining.framework.plugin.annotations.PluginCategory;
 import org.processmining.framework.plugin.annotations.PluginVariant;
 
-@Plugin(name = "Prediction Service", 
+//@Plugin(name = "Prediction Service", 
+@Plugin(name = "Prediction Model Provider - Version W", 
 		parameterLabels = {"Prediction Services Provider"}, 
 	    returnLabels = {"Prediction Results"}, 
 	    returnTypes = {PredictionResults[].class},
 		userAccessible = true, 
-		help = "This plug in provides (multi-perspective) prediction information",
+		help = "This plug in provides (multi-perspective) predicted information",
 		categories = {PluginCategory.Analytics}
 )
 /**
@@ -42,30 +43,49 @@ import org.processmining.framework.plugin.annotations.PluginVariant;
  */
 public class PluginPredictionService {
 
-	
+	private final String pluginName = "SDPROM (Prediction Service Provider - Version W)";
+
     @UITopiaVariant(
             affiliation = "University of Innsbruck",
             author = "Ario Santoso",
             email = "[ario.santoso@uibk.ac.at/santoso.ario@gmail.com]",
             website = "http://bit.ly/ariosantoso"
     )
-    @PluginVariant(variantLabel = "Prediction Service", requiredParameterLabels = {0})
+    @PluginVariant(variantLabel = "Prediction Service Provider - Version W", requiredParameterLabels = {0})
 	public PredictionResults[] applyPredictionModel(UIPluginContext context, PredictionServices predService) {
 		
-    	PredictionPanel predPanel = new PredictionPanel(predService);
-//    	InteractionResult result = context.showWizard("Prediction Services", true, true, predPanel);
-	    InteractionResult result = context.showConfiguration("Prediction Services", new JScrollPane(predPanel));
+		context.getProgress().setIndeterminate(true);
+
+    	System.out.println("\n\n\n\n\n------------------------------------------------------------------------------------------");
+    	System.out.println("------------------------------------------------------------------------------------------");
+    	System.out.println(pluginName+" - Started");
+    	System.out.println("------------------------------------------------------------------------------------------");
+    	System.out.println("------------------------------------------------------------------------------------------\n\n\n");
+
+    	try{
+    		
+	    	PredictionPanel predPanel = new PredictionPanel(predService);
+	    	//InteractionResult result = context.showWizard("Prediction Services", true, true, predPanel);
+		    InteractionResult result = context.showConfiguration("Prediction Services", new JScrollPane(predPanel));
+		    
+		    if(result == InteractionResult.CONTINUE || result == InteractionResult.FINISHED){
+		    	
+		    	//System.out.println("--- FIN ---");
+		    	return predPanel.getPredResults();
+		    	
+		    }else if(result == InteractionResult.CANCEL){
+		    	
+		    	return null;
+		    }
+    	}finally{
+    		
+    	   	System.out.println("\n\n\n\n\n------------------------------------------------------------------------------------------");
+        	System.out.println("------------------------------------------------------------------------------------------");
+        	System.out.println(pluginName+" - Finished");
+        	System.out.println("------------------------------------------------------------------------------------------");
+        	System.out.println("------------------------------------------------------------------------------------------\n\n\n\n\n");
+    	}
 	    
-	    if(result == InteractionResult.CONTINUE || result == InteractionResult.FINISHED){
-	    	
-	    	System.out.println("--- FIN ---");
-	    	
-	    	return predPanel.getPredResults();
-	    	
-	    }else if(result == InteractionResult.CANCEL){
-	    	
-	    	return null;
-	    }
 		return null;
 	    
 	}

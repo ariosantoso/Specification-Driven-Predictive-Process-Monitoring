@@ -19,6 +19,8 @@ package org.astw.foe.impl.nonnumeric;
 
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.astw.foe.NonNumExp;
 import org.astw.util.Const;
@@ -97,9 +99,20 @@ public class NonNumExpString implements NonNumExp{
 	@Override
 	public void evaluateQuery(XTrace xtrace)  throws Exception{
 	}
+	
+	@Override
+	public void evaluateAggregateFunction(XTrace xtrace) throws Exception{
+	}
+
 
 	@Override
 	public void evaluateSpecialIndex(int current, int last) {
+	}
+
+	@Override
+	public Set<String> getVariables(){
+		
+		return new HashSet<String>();
 	}
 
 }

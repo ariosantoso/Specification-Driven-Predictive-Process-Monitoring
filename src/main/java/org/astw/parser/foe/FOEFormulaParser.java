@@ -17,8 +17,6 @@
  *******************************************************************************/
 package org.astw.parser.foe;
 
-import org.antlr.v4.runtime.ANTLRErrorListener;
-import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CodePointCharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -73,12 +71,17 @@ public class FOEFormulaParser {
 			sb.append("PARSING ERROR: \n");
 			sb.append("[ERROR] "+(e.getMessage() != null? e.getMessage(): "\n"));
 			
+			e.printStackTrace();
+			
 			//failed = true;
 			//parsedFormula =  null;
 			
 			throw new Exception(sb.toString());
 		}
 
+//		System.out.println("parserErrorListener.isError() "+parserErrorListener.isError());
+//		System.out.println("lexerErrorListener.isError() "+lexerErrorListener.isError());
+		
 		//There is an error while parsing the formula
 		if(parserErrorListener.isError() || lexerErrorListener.isError() || failed == true){
 			
@@ -89,6 +92,8 @@ public class FOEFormulaParser {
 			
 			//failed = true;
 			//parsedFormula =  null;
+			
+//			System.out.println("parsedFormula: "+parsedFormula);
 			
 			throw new Exception(sb.toString());
 
@@ -101,6 +106,8 @@ public class FOEFormulaParser {
 
 //		System.out.println("============================================================");
 		
+//		System.out.println("parsedFormula: "+parsedFormula);
+
 		//No error at all in the given formula, return the parsed temporal property
 		return parsedFormula;
 	}

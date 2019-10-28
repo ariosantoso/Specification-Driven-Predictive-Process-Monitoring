@@ -17,6 +17,7 @@
  *******************************************************************************/
 package org.astw.foe.impl.eventexp;
 import java.util.HashMap;
+import java.util.Set;
 
 import org.astw.foe.EventExp;
 import org.astw.foe.EventExpComponent;
@@ -96,6 +97,12 @@ public class BracketEventExp implements EventExp{
 		
 		this.component.evaluateQuery(xtrace);
 	}
+	
+	@Override
+	public void evaluateAggregateFunction(XTrace xtrace) throws Exception{
+		
+		this.component.evaluateAggregateFunction(xtrace);
+	}
 
 	@Override
 	public void evaluateSpecialIndex(int current, int last) {
@@ -107,6 +114,12 @@ public class BracketEventExp implements EventExp{
 	public boolean evaluateGroundedFormula() throws Exception {
 
 		return this.component.evaluateGroundedFormula();
+	}
+
+	@Override
+	public Set<String> getVariables(){
+		
+		return this.component.getVariables();
 	}
 
 }

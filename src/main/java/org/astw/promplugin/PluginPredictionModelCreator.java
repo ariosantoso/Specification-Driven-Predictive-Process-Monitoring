@@ -41,12 +41,13 @@ import org.processmining.framework.plugin.annotations.Plugin;
 import org.processmining.framework.plugin.annotations.PluginCategory;
 import org.processmining.framework.plugin.annotations.PluginVariant;
 
-@Plugin(name = "Prediction Model Synthesizer", 
+//@Plugin(name = "Prediction Model Synthesizer", 
+@Plugin(name = "Prediction Model Creator - Version W", 
 		parameterLabels = {"XES Event Log"}, 
 	    returnLabels = { "Prediction Service" }, 
 	    returnTypes = { PredictionServices.class },
 		userAccessible = true, 
-		help = "This plug in creates (multi-perspective) prediction models",
+		help = "This plug in creates (multi-perspective) prediction models. It uses the machine learning libraries provided by WEKA",
 		categories = {PluginCategory.Analytics}
 )
 /**
@@ -54,6 +55,7 @@ import org.processmining.framework.plugin.annotations.PluginVariant;
  */
 public class PluginPredictionModelCreator {
 
+	private final String pluginName = "SDPROM (Prediction Model Creator - Version W)";
 	
     @UITopiaVariant(
             affiliation = "University of Innsbruck",
@@ -61,9 +63,19 @@ public class PluginPredictionModelCreator {
             email = "[ario.santoso@uibk.ac.at/santoso.ario@gmail.com]",
             website = "http://bit.ly/ariosantoso"
     )
-    @PluginVariant(variantLabel = "Prediction Model Synthesizer", requiredParameterLabels = {0})
+    @PluginVariant(variantLabel = "Prediction Model Creator - Version W", requiredParameterLabels = {0})
 	public PredictionServices createPredictionModel(UIPluginContext context, XLog xlog) {
 		
+    	System.out.println("\n\n\n\n\n------------------------------------------------------------------------------------------");
+    	System.out.println("------------------------------------------------------------------------------------------");
+    	System.out.println(pluginName+" - Started");
+    	System.out.println("------------------------------------------------------------------------------------------");
+    	System.out.println("------------------------------------------------------------------------------------------\n\n\n");
+    	
+	    ////////////////////////////////////////////////////////////////////////////////////
+	    //specify a set of analytic rules 
+	    ////////////////////////////////////////////////////////////////////////////////////	    
+
 	    InitialConfigPanel icp = new InitialConfigPanel(context);
 	    
 	    while(true){
@@ -82,12 +94,17 @@ public class PluginPredictionModelCreator {
 		    }
 	    }
 	    
+        context.getProgress().setIndeterminate(true);
+	    
 	    ArrayList<AnalyticRuleSpec> arsSet = icp.getArsSet();
 	    
 //	    for(AnalyticRuleSpec ars : arsSet){
 //	    	System.out.println("DEBUGA: "+ars.getRuleName());
 //	    }
-	    
+	    ////////////////////////////////////////////////////////////////////////////////////
+	    //END OF specifying a set of analytic rules 
+	    ////////////////////////////////////////////////////////////////////////////////////	    
+
 
 	    ////////////////////////////////////////////////////////////////////////////////////
 	    //process all of this set of analytic rules 
@@ -103,7 +120,7 @@ public class PluginPredictionModelCreator {
 			allAttributeNames.remove("time:timestamp");
 
 			context.getProgress().setIndeterminate(true);
-			boolean initRes = predictionServices.init(xlog, allAttributeNames);
+			boolean initRes = predictionServices.initWekaMode(xlog, allAttributeNames);
 			
 			if(initRes == false)
 				throw new Exception("Error while processing the given set of Analytic Rules");
@@ -151,7 +168,7 @@ public class PluginPredictionModelCreator {
 
 	    try {
 	        context.getProgress().setIndeterminate(true);
-			predictionServices.buildPredictionServices();
+			predictionServices.buildPredictionServicesWekaMode();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -160,6 +177,12 @@ public class PluginPredictionModelCreator {
 	    ////////////////////////////////////////////////////////////////////////////////////
 	    //END OF Build the prediction model (classifier/regressor) 
 	    ////////////////////////////////////////////////////////////////////////////////////	    
+
+    	System.out.println("\n\n\n\n\n------------------------------------------------------------------------------------------");
+    	System.out.println("------------------------------------------------------------------------------------------");
+    	System.out.println(pluginName+" - Finished");
+    	System.out.println("------------------------------------------------------------------------------------------");
+    	System.out.println("------------------------------------------------------------------------------------------\n\n\n\n\n");
 
 	    return predictionServices;
 	}

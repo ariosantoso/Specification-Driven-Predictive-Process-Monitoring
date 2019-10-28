@@ -38,7 +38,8 @@ import org.astw.promplugin.Predictor;
 
 public class SetOfPredictorPanel extends JPanel{
 
-	private HashSet<Predictor> ars;
+	private static final long serialVersionUID = -5957838469433745521L;
+	//private HashSet<Predictor> ars;
 	private ArrayList<String> allAttributeNames;
 	
 	public SetOfPredictorPanel(ArrayList<String> allAttributeNames){

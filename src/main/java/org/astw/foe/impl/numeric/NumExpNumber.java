@@ -18,6 +18,8 @@
 package org.astw.foe.impl.numeric;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.astw.foe.NumExp;
 import org.astw.util.Const.NumberType;
@@ -118,6 +120,10 @@ public class NumExpNumber implements NumExp{
 	}
 
 	@Override
+	public void evaluateAggregateFunction(XTrace xtrace) throws Exception{
+	}
+
+	@Override
 	public void evaluateSpecialIndex(int current, int last) {
 	}
 
@@ -127,4 +133,11 @@ public class NumExpNumber implements NumExp{
 
 		return this.xesDataType;
 	}
+	
+	@Override
+	public Set<String> getVariables(){
+
+		return new HashSet<String>();
+	}
+
 }

@@ -18,6 +18,7 @@
 package org.astw.foe;
 
 import java.util.HashMap;
+import java.util.Set;
 
 import org.astw.util.Const.ValueType;
 import org.astw.util.Const.XESDataType;
@@ -35,12 +36,24 @@ public interface EventExpComponent {
 	public String toString();
 	public String prettyFormat(String tab);
 	public EventExpComponent clone();
+	/**
+	 * Assign the corresponding XES Data Type to each AttributeAccessor 
+	 */
 	public void assignQueryXESDataType(HashMap<String, XESDataType> attributeNamesAndTypes) throws Exception;
 	public ValueType getValueType();
 	public void substituteVar(String varName, int value);
 
+	//evaluate the aggregate functions
+	public void evaluateAggregateFunction(XTrace xtrace) throws Exception;
+
+	//evaluate the queries/attribute accessors
 	public void evaluateQuery(XTrace xtrace) throws Exception;
+
+	//evaluate the special indices (i.e., CURR and LAST) with the concrete values
 	public void evaluateSpecialIndex(int current, int last);
+
+	//collect all variables 
+	public Set<String> getVariables();
 	////////////////////////////////////////////////////////////////////////////////
 	// END OF Common shared method
 	////////////////////////////////////////////////////////////////////////////////

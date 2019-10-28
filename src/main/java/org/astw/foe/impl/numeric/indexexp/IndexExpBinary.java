@@ -18,6 +18,7 @@
 package org.astw.foe.impl.numeric.indexexp;
 
 import java.util.HashMap;
+import java.util.Set;
 
 import org.astw.foe.IndexExp;
 import org.astw.util.Const;
@@ -68,19 +69,19 @@ public class IndexExpBinary implements IndexExp{
 		this.arithOp = arithOp;
 	}	
 	
-	public int getValue(){
+	public int getIdxValue(){
 
 		if(this.arithOp == ArithmeticOperator.PLUS)
-			return component1.getValue() + component2.getValue();
+			return component1.getIdxValue() + component2.getIdxValue();
 
 		if(this.arithOp == ArithmeticOperator.MINUS)
-			return component1.getValue() - component2.getValue();
+			return component1.getIdxValue() - component2.getIdxValue();
 		
 		if(this.arithOp == ArithmeticOperator.MUL)
-			return component1.getValue() * component2.getValue();
+			return component1.getIdxValue() * component2.getIdxValue();
 
 		if(this.arithOp == ArithmeticOperator.DIV)
-			return component1.getValue() / component2.getValue();
+			return component1.getIdxValue() / component2.getIdxValue();
 
 		return -1;
 	}
@@ -152,7 +153,7 @@ public class IndexExpBinary implements IndexExp{
 
 	@Override
 	public double getNumericValue() {
-		return this.getValue();
+		return this.getIdxValue();
 	}
 
 	@Override
@@ -165,9 +166,17 @@ public class IndexExpBinary implements IndexExp{
 	@Override
 	public void evaluateQuery(XTrace xtrace)  throws Exception{
 
-		this.component1.evaluateQuery(xtrace);
-		this.component2.evaluateQuery(xtrace);
+//		this.component1.evaluateQuery(xtrace);
+//		this.component2.evaluateQuery(xtrace);
 	}
+	
+	@Override
+	public void evaluateAggregateFunction(XTrace xtrace) throws Exception{
+		
+//		this.component1.evaluateAggregateFunction(xtrace);
+//		this.component2.evaluateAggregateFunction(xtrace);
+	}
+
 
 	@Override
 	public void evaluateSpecialIndex(int current, int last) {
@@ -181,4 +190,16 @@ public class IndexExpBinary implements IndexExp{
 
 		return XESDataType.XES_INT;
 	}
+	
+	@Override
+	public Set<String> getVariables(){
+
+		Set<String> comp1Vars = this.component1.getVariables();
+		Set<String> comp2Vars = this.component2.getVariables();
+		
+		comp1Vars.addAll(comp2Vars);
+		
+		return comp1Vars;
+	}
+
 }

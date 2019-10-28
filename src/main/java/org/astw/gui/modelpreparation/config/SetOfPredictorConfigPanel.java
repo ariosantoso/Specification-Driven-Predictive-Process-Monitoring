@@ -39,8 +39,7 @@ public class SetOfPredictorConfigPanel extends JPanel{
     private UIPluginContext context;
     private ArrayList<String> allAttributeNames;
     
-	public SetOfPredictorConfigPanel(
-			UIPluginContext context, PredictionServices predServ, ArrayList<String> allAttributeNames){
+	public SetOfPredictorConfigPanel(UIPluginContext context, PredictionServices predServ, ArrayList<String> allAttributeNames){
 		
 		this.context = context;
 		this.allAttributeNames = allAttributeNames;

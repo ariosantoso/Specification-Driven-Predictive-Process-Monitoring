@@ -38,6 +38,9 @@ public class Const {
 	public final static double UNDEFINED_NUM_VAL = Double.NaN;
 	public final static String UNDEFINED_NON_NUM_VAL = "∞§¡¶¢∞§¢¶™£";
 	
+	//SDPROM modes
+	public enum Mode {WEKA, PYTHON, NEURAL_NETWORK};
+
 	
 	//constanst for index expression
 	public final static String CURR = CONST_PREFIX+"CURR";
@@ -58,6 +61,8 @@ public class Const {
 	//type stuff
 	public enum NumberType {INT, DOUBLE}
 	public enum ValueType {NUMERIC_EXP, NON_NUMERIC_EXP, UNKNOWN}
+	public enum NumAggregationType {SUM, AVG, MIN, MAX, COUNT, UNKNOWN}
+	public enum NonNumAggregationType {CONCAT, UNKNOWN}
 	//public enum EECompType {NUMERIC_EXP, NON_NUMERIC_EXP, BOOLEAN, UNKNOWN}
 	
 	//XES data type. Note: XES_UNKNOWN is used before we assign/discover the type of an attribute accessor
@@ -70,6 +75,9 @@ public class Const {
 
 	//Predictor models
 	public enum PredictorModelType {DecisionTree, RandomForest, LinearRegression};
+
+	//Predictor models
+	public enum PredictorModelTypePy {DecisionTree, RandomForest, LinearRegression};
 
 	//Special Output Format
 	public enum SpecialOutputFormat {NO_SPECIAL_FORMAT, TIMESTAMP_STRING, HOURS};

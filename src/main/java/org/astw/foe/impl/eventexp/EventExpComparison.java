@@ -18,6 +18,7 @@
 package org.astw.foe.impl.eventexp;
 
 import java.util.HashMap;
+import java.util.Set;
 
 import org.astw.foe.EventExp;
 import org.astw.foe.EventExpComponent;
@@ -29,11 +30,14 @@ import org.astw.util.Const.XESDataType;
 import org.deckfour.xes.model.XTrace;
 
 /**
+ * UNUSED IN VERSION 2
+ * 
  * @author Ario Santoso (santoso.ario@gmail.com)
  */
+@Deprecated
 public class EventExpComparison implements EventExp{
 
-	//e ::= nonNumExp1 lcop nonNumExp2 | numExp1 acop numExp2 | e1 lcop e2
+	//e ::= e1 lcop e2
     
 	//public enum EventExpConnective {EQUAL, NOT_EQUAL, GREATER_THAN, LESS_THAN, GREATER_THAN_OR_EQUAL, LESS_THAN_OR_EQUAL}
 
@@ -160,6 +164,13 @@ public class EventExpComparison implements EventExp{
 	}
 
 	@Override
+	public void evaluateAggregateFunction(XTrace xtrace) throws Exception{
+		
+		this.component1.evaluateAggregateFunction(xtrace);
+		this.component2.evaluateAggregateFunction(xtrace);
+	}
+
+	@Override
 	public void evaluateSpecialIndex(int current, int last) {
 		this.component1.evaluateSpecialIndex(current, last);
 		this.component2.evaluateSpecialIndex(current, last);
@@ -172,6 +183,16 @@ public class EventExpComparison implements EventExp{
 		return this.getValue();
 	}
 	
-	
+	@Override
+	public Set<String> getVariables(){
+		
+		Set<String> comp1Vars = this.component1.getVariables();
+		Set<String> comp2Vars = this.component2.getVariables();
+		
+		comp1Vars.addAll(comp2Vars);
+		
+		return comp1Vars;
+	}
+
 
 }

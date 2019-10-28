@@ -12,6 +12,11 @@ import org.astw.foe.impl.numeric.indexexp.*;
 import org.astw.*;
 import org.astw.util.*;
 import org.astw.util.Const;
+import org.astw.parser.numConditionalAggregation.*;
+import org.astw.parser.nonNumConditinoalAggregation.*;
+
+import java.util.*;
+
 
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
@@ -110,4 +115,14 @@ public interface FOEListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitQueryNumeric(FOEParser.QueryNumericContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link FOEParser#realNumber}.
+	 * @param ctx the parse tree
+	 */
+	void enterRealNumber(FOEParser.RealNumberContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link FOEParser#realNumber}.
+	 * @param ctx the parse tree
+	 */
+	void exitRealNumber(FOEParser.RealNumberContext ctx);
 }

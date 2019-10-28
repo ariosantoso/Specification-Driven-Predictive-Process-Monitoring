@@ -109,6 +109,13 @@ public class TargetExpUtil {
 		return te;
 	}
 	
+	public static TargetExpression evaluateAggregateFunction(TargetExpression targetExp, XTrace xtrace) throws Exception{
+
+		TargetExpression te = targetExp.clone();
+		te.evaluateAggregateFunction(xtrace);
+		return te;
+	}
+
 	/**
 	 * Evaluate the value of the target expression w.r.t. the given trace
 	 * 
@@ -118,6 +125,7 @@ public class TargetExpUtil {
 	 * 
 	 * @return true - if the given xtrace satisfy the given formula (false - otherwise)
 	 * @throws Exception - in case the evaluation is (currently) not possible
+	 * @deprecated - UNUSED - not maintained
 	 */
 	public static double evaluateDoubleNumericTargetExpression(
 			NumExp numericTargetExpression, XTrace xtrace, int current) throws Exception{
@@ -142,6 +150,7 @@ public class TargetExpUtil {
 	 * 
 	 * @return true - if the given xtrace satisfy the given formula (false - otherwise)
 	 * @throws Exception - in case the evaluation is (currently) not possible
+	 * @deprecated - UNUSED - not maintained
 	 */
 	public static long evaluateLongNumericTargetExpression(
 			NumExp numericTargetExpression, XTrace xtrace, int current) throws Exception{
@@ -179,10 +188,18 @@ public class TargetExpUtil {
 		NumExp ne2 = (NumExp) TargetExpUtil.evaluateQuery(ne1, xtrace);
 //		System.out.println("After Evaluating the Queries: \n"+ne2.prettyFormat(""));
 		
-		if(ne2.getXESDataType() == XESDataType.XES_LONG)
-			return ""+(long) ne2.getNumericValue();
+		//Evaluate the aggregate functions
+		NumExp ne3 = (NumExp) TargetExpUtil.evaluateAggregateFunction(ne2, xtrace);
+
+		double result = ne3.getNumericValue();
+		
+		if(Double.isNaN(result))
+			result = 0;
+		
+		if(ne3.getXESDataType() == XESDataType.XES_LONG)
+			return ""+(long) result;
 		else
-			return ""+ne2.getNumericValue();
+			return ""+result;
 	}
 	
 	/**
@@ -206,7 +223,10 @@ public class TargetExpUtil {
 		NonNumExp nne2 = (NonNumExp) TargetExpUtil.evaluateQuery(nne1, xtrace);
 //		System.out.println("After Evaluating the Queries: \n"+nne2.prettyFormat(""));
 		
-		return nne2.getNonNumericValue();
+		//Evaluate the aggregate functions
+		NonNumExp nne3 = (NonNumExp) TargetExpUtil.evaluateAggregateFunction(nne2, xtrace);
+
+		return nne3.getNonNumericValue();
 	}
 
 	public static String computeTargetExpressionValue(

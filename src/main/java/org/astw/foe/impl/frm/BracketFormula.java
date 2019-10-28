@@ -17,6 +17,7 @@
  *******************************************************************************/
 package org.astw.foe.impl.frm;
 import java.util.HashMap;
+import java.util.Set;
 
 import org.astw.foe.Formula;
 import org.astw.foe.NumExp;
@@ -86,6 +87,12 @@ public class BracketFormula implements Formula{
 	}
 
 	@Override
+	public void evaluateAggregateFunction(XTrace xtrace) throws Exception{
+		
+		this.component.evaluateAggregateFunction(xtrace);
+	}
+
+	@Override
 	public void evaluateSpecialIndex(int current, int last) {
 
 		this.component.evaluateSpecialIndex(current, last);
@@ -95,6 +102,12 @@ public class BracketFormula implements Formula{
 	public boolean evaluateGroundedFormula() throws Exception {
 		
 		return this.component.evaluateGroundedFormula();
+	}
+
+	@Override
+	public Set<String> getVariables(){
+		
+		return this.component.getVariables();
 	}
 
 }

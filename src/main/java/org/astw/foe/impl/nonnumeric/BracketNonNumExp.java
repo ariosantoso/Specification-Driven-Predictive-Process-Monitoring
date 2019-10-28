@@ -17,6 +17,7 @@
  *******************************************************************************/
 package org.astw.foe.impl.nonnumeric;
 import java.util.HashMap;
+import java.util.Set;
 
 import org.astw.foe.NonNumExp;
 import org.astw.util.Const;
@@ -100,11 +101,24 @@ public class BracketNonNumExp implements NonNumExp{
 
 		this.component.evaluateQuery(xtrace);
 	}
+	
+	@Override
+	public void evaluateAggregateFunction(XTrace xtrace) throws Exception{
+		
+		this.component.evaluateAggregateFunction(xtrace);
+	}
+
 
 	@Override
 	public void evaluateSpecialIndex(int current, int last) {
 
 		this.component.evaluateSpecialIndex(current, last);
+	}
+
+	@Override
+	public Set<String> getVariables(){
+		
+		return this.component.getVariables();
 	}
 
 }

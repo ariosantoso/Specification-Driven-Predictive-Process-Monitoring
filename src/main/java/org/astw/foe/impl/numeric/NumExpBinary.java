@@ -18,6 +18,8 @@
 package org.astw.foe.impl.numeric;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.astw.foe.NumExp;
 import org.astw.util.Const;
@@ -104,7 +106,7 @@ public class NumExpBinary implements NumExp{
 		if(valTypeComp1 != ValueType.NUMERIC_EXP)
 			error.append(this.component1+" is non-numeric, and hence can't be in an arithmetic expression\n");
 
-		if(valTypeComp2 != ValueType.NON_NUMERIC_EXP)
+		if(valTypeComp2 != ValueType.NUMERIC_EXP)
 			error.append(this.component2+" is non-numeric, and hence can't be in an arithmetic expression\n");
 
 		if(valTypeComp1 != valTypeComp2)
@@ -154,6 +156,14 @@ public class NumExpBinary implements NumExp{
 		this.component1.evaluateQuery(xtrace);
 		this.component2.evaluateQuery(xtrace);
 	}
+	
+	@Override
+	public void evaluateAggregateFunction(XTrace xtrace) throws Exception{
+		
+		this.component1.evaluateAggregateFunction(xtrace);
+		this.component2.evaluateAggregateFunction(xtrace);
+	}
+
 
 	@Override
 	public void evaluateSpecialIndex(int current, int last) {
@@ -195,5 +205,15 @@ public class NumExpBinary implements NumExp{
 		return XESDataType.XES_DOUBLE;
 	}
 
+	@Override
+	public Set<String> getVariables(){
+
+		Set<String> comp1Vars = this.component1.getVariables();
+		Set<String> comp2Vars = this.component2.getVariables();
+		
+		comp1Vars.addAll(comp2Vars);
+		
+		return comp1Vars;
+	}
 
 }

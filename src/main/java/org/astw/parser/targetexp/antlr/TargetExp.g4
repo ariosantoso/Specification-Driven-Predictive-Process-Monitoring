@@ -19,6 +19,11 @@ import org.astw.*;
 import org.astw.util.*;
 import org.astw.util.Const;
 import org.astw.analyticrules.*;
+import org.astw.parser.numConditionalAggregation.*;
+import org.astw.parser.nonNumConditinoalAggregation.*;
+
+import java.util.*;
+
 }
 
 
@@ -78,6 +83,29 @@ nonNumExp returns [NonNumExp nonNumericExpression]:
             System.out.println("DEBUGA: NonNE-Query: "+$nneQuery.text);
             $nonNumericExpression = $nneQuery.attAccessor;
          }
+         | concatAgg=NON_NUMERIC_AGG_FUNC_CONCAT{
+            System.out.println("DEBUGA: CONCAT-agg-func: "+$concatAgg.text);
+                       
+            String aggStatement = $concatAgg.text;
+            
+            //filter out function name and the brackets
+            aggStatement = aggStatement.replace("CONCAT{","");
+            aggStatement = aggStatement.replace("}","");
+            System.out.println("DEBUGA: CONCAT-agg-func content: "+aggStatement);
+            
+            try{
+                NonNumConditionalAggregation nnca = 
+                    new NonNumConditionalAggregationParser().parse(aggStatement);
+                nnca.setAggregationType(Const.NonNumAggregationType.CONCAT);
+                
+                System.out.println("DEBUGA: AggType: "+Const.NonNumAggregationType.CONCAT);
+
+                $nonNumericExpression = nnca;
+
+            }catch(Exception e){
+              notifyErrorListeners("ERROR: " + e.getMessage());
+            }
+         }
          | LP nne=nonNumExp RP{
             System.out.println("DEBUGA: NonEE-BRACKET: "+$nne.text);
             $nonNumericExpression = new BracketNonNumExp($nne.nonNumericExpression);
@@ -85,7 +113,7 @@ nonNumExp returns [NonNumExp nonNumericExpression]:
          ;
 
 numExp returns [NumExp numericExpression]: 
-      ne=Number{
+      ne=realNumber{
             System.out.println("DEBUGA: NE-INT: "+$ne.text);
             try{
                 $numericExpression = new NumExpNumber($ne.text);
@@ -104,6 +132,160 @@ numExp returns [NumExp numericExpression]:
             System.out.println("DEBUGA: NE-Query: "+$neQuery.text);
             $numericExpression = $neQuery.attAccessorNumeric;
       }
+      | sumAgg=NUMERIC_AGG_FUNC_SUM{
+            System.out.println("DEBUGA: SUM-agg-func: "+$sumAgg.text);
+            
+            String aggStatement = $sumAgg.text;
+            
+            //filter out function name and the brackets
+            aggStatement = aggStatement.replace("SUM{","");
+            aggStatement = aggStatement.replace("}","");
+            System.out.println("DEBUGA: SUM-agg-func content: "+aggStatement);
+            
+            try{
+                NumConditionalAggregation nca = 
+                    new NumConditionalAggregationParser().parse(aggStatement);
+                nca.setAggregationType(Const.NumAggregationType.SUM);
+                
+                System.out.println(nca.getAggregationType());
+                
+                System.out.println("DEBUGA: AggType: "+Const.NumAggregationType.SUM);
+
+                $numericExpression = nca;
+
+            }catch(Exception e){
+              notifyErrorListeners("ERROR: " + e.getMessage());
+            }
+            
+      }
+      | avgAgg=NUMERIC_AGG_FUNC_AVG{
+            System.out.println("DEBUGA: AVG-agg-func: "+$avgAgg.text);
+            
+            String aggStatement = $avgAgg.text;
+            
+            //filter out function name and the brackets
+            aggStatement = aggStatement.replace("AVG{","");
+            aggStatement = aggStatement.replace("}","");
+            System.out.println("DEBUGA: AVG-agg-func content: "+aggStatement);
+            
+            try{
+                NumConditionalAggregation nca = 
+                    new NumConditionalAggregationParser().parse(aggStatement);
+                nca.setAggregationType(Const.NumAggregationType.AVG);
+                
+                System.out.println("DEBUGA: AggType: "+Const.NumAggregationType.AVG);
+                
+                $numericExpression = nca;
+
+            }catch(Exception e){
+              notifyErrorListeners("ERROR: " + e.getMessage());
+            }
+      }
+      | minAgg=NUMERIC_AGG_FUNC_MIN{
+            System.out.println("DEBUGA: MIN-agg-func: "+$minAgg.text);
+            
+            String aggStatement = $minAgg.text;
+            
+            //filter out function name and the brackets
+            aggStatement = aggStatement.replace("MIN{","");
+            aggStatement = aggStatement.replace("}","");
+            System.out.println("DEBUGA: MIN-agg-func content: "+aggStatement);
+            
+            try{
+                NumConditionalAggregation nca = 
+                    new NumConditionalAggregationParser().parse(aggStatement);
+                nca.setAggregationType(Const.NumAggregationType.MIN);
+                
+                System.out.println("DEBUGA: AggType: "+Const.NumAggregationType.MIN);
+                
+                $numericExpression = nca;
+
+            }catch(Exception e){
+              notifyErrorListeners("ERROR: " + e.getMessage());
+            }
+      }
+      | maxAgg=NUMERIC_AGG_FUNC_MAX{
+            System.out.println("DEBUGA: MAX-agg-func: "+$maxAgg.text);
+            
+            String aggStatement = $maxAgg.text;
+            
+            //filter out function name and the brackets
+            aggStatement = aggStatement.replace("MAX{","");
+            aggStatement = aggStatement.replace("}","");
+            System.out.println("DEBUGA: MAX-agg-func content: "+aggStatement);
+            
+            try{
+                NumConditionalAggregation nca = 
+                    new NumConditionalAggregationParser().parse(aggStatement);
+                nca.setAggregationType(Const.NumAggregationType.MAX);
+                
+                System.out.println("DEBUGA: AggType: "+Const.NumAggregationType.MAX);
+                
+                $numericExpression = nca;
+
+            }catch(Exception e){
+              notifyErrorListeners("ERROR: " + e.getMessage());
+            }
+
+      }
+      | cntAgg=NUMERIC_AGG_FUNC_COUNT{
+            System.out.println("DEBUGA: COUNT-agg-func: "+$cntAgg.text);
+            
+            String aggStatement = $cntAgg.text;
+            
+            //filter out function name and the brackets
+            aggStatement = aggStatement.replace("COUNT{","");
+            aggStatement = aggStatement.replace("}","");
+            System.out.println("DEBUGA: COUNT-agg-func content: "+aggStatement);
+            
+            try{
+                NumConditionalAggregation nca = 
+                    new NumConditionalAggregationParser().parseCountAggFunc(aggStatement);
+                nca.setAggregationType(Const.NumAggregationType.COUNT);
+                
+                System.out.println("DEBUGA: AggType: "+Const.NumAggregationType.COUNT);
+                
+                $numericExpression = nca;
+
+            }catch(Exception e){
+              notifyErrorListeners("ERROR: " + e.getMessage());
+            }
+      }
+      | cntAgg=NUMERIC_AGG_FUNC_COUNTVAL{
+            System.out.println("DEBUGA: COUNTVAL-agg-func: "+$cntAgg.text);
+            
+            String aggStatement = $cntAgg.text;
+                        
+            //filter out function name and the brackets
+            aggStatement = aggStatement.replace("COUNTVAL{","");
+            aggStatement = aggStatement.replace("}","");
+            System.out.println("DEBUGA: COUNTVAL-agg-func content: "+aggStatement);
+            
+            //tokenize the content
+            StringTokenizer strtok = new StringTokenizer(aggStatement, "#");
+            String attName = strtok.nextToken().trim();
+            StringTokenizer strtok2 = new StringTokenizer(strtok.nextToken(), ":");
+            String aggRangeStart = strtok2.nextToken().trim();
+            String aggRangeEnd = strtok2.nextToken().trim();
+
+            
+            try{
+                IndexExp aggRangeSt = 
+                    new NumConditionalAggregationParser().parseAggRange(aggRangeStart);
+                IndexExp aggRangeEd = 
+                    new NumConditionalAggregationParser().parseAggRange(aggRangeEnd);
+                    
+                NumCountValAggregation ncva = 
+                        new NumCountValAggregation(attName, aggRangeSt, aggRangeEd);
+                    
+                $numericExpression = ncva;
+
+            }catch(Exception e){
+              notifyErrorListeners("ERROR: " + e.getMessage());
+            }
+
+            
+      }
       | LP ne5=numExp RP{
             System.out.println("DEBUGA: EE-BRACKET: "+$ne5.text);
             $numericExpression = new BracketNumExp($ne5.numericExpression);
@@ -111,7 +293,7 @@ numExp returns [NumExp numericExpression]:
       ;
 
 indexExp returns [IndexExp indexExpression]: 
-        num=Number{
+        num=PosNumber{
           System.out.println("DEBUGA: IP-INT: "+$num.text);
           try{
             $indexExpression = new IndexExpNum($num.text);
@@ -172,6 +354,17 @@ queryNumeric returns [AttributeAccessor attAccessorNumeric]:
 //END OF Numeric, Non Numeric, and Index Expression
 //----------------------------------------------
 
+
+realNumber returns [String num]:
+    ('-'|)p=PosNumber{
+                    
+       $num = '-' + $p.text;
+    }
+    | pn=PosNumber{
+                   
+       $num = $pn.text;
+    };
+
 /*
  * ----------------------------------------
  *  END OF Parser Rules
@@ -210,7 +403,7 @@ Multiply: '*';
 Divide: '\\';
 
 //Non Numeric Expression
-String: '"'([a-z] | [A-Z] | [0-9]| ' ' )*'"';
+String: '"'([a-z] | [A-Z] | [0-9]| UNDERSCORE | DASH | ' ' )*'"';
 True: ('TRUE');
 False: ('FALSE');
 
@@ -229,7 +422,22 @@ AttName: '].'([a-z] | [A-Z] | ':' )+;
 Qf: 'e[';
 Quote: '"';
 NEWLINE : [\r\n]+ ;
-Number: ('-'|)([0-9])+(('.'([0-9])+)|);
+PosNumber: ([0-9])+(('.'([0-9])+)|);
+//Number: ('-'|)PosNumber;
+
+
+// Lexicon for AGGREGATE FUNCTIONS
+NUMERIC_AGG_FUNC_SUM: 'SUM{'(~('{'|'}'))+'}';
+NUMERIC_AGG_FUNC_AVG: 'AVG{'(~('{'|'}'))+'}';
+NUMERIC_AGG_FUNC_MAX: 'MAX{'(~('{'|'}'))+'}';
+NUMERIC_AGG_FUNC_MIN: 'MIN{'(~('{'|'}'))+'}';
+NUMERIC_AGG_FUNC_COUNT: 'COUNT{'(~('{'|'}'))+'}';
+NUMERIC_AGG_FUNC_COUNTVAL: 'COUNTVAL{'(~('{'|'}'))+'}';
+
+NON_NUMERIC_AGG_FUNC_CONCAT: 'CONCAT{'(~('{'|'}'))+'}';
+
+fragment UNDERSCORE: '_' ;
+fragment DASH: '-' ;
 
 /*
  * ----------------------------------------

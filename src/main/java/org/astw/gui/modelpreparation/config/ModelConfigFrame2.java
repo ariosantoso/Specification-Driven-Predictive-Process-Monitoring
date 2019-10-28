@@ -25,6 +25,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
@@ -41,11 +43,13 @@ import javax.swing.LayoutStyle;
 import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
 
+import org.astw.promplugin.Predictor;
+import org.astw.util.Const.Mode;
 import org.astw.util.Const.PredictorModelType;
 import org.astw.util.Const.SpecialOutputFormat;
 import org.astw.util.encoder.AttributeEncodingInfo;
-import org.astw.util.encoder.OneHotEncodingV2Info;
 import org.astw.util.encoder.Encoder.EncodingType;
+import org.astw.util.encoder.OneHotEncodingV2Info;
 import org.deckfour.xes.model.XLog;
 
 /**
@@ -63,6 +67,7 @@ public class ModelConfigFrame2 extends JFrame {
 	private AttributeEncodingInfo [] attEncodingInfo;
 	private PredictorConfigPanel predPanel;
 	private PredictorModelType modelType; 
+	private String modelTypePy = ""; 
 	private SpecialOutputFormat specialOutputFormat;
 	
 	private final String DECISION_TREE_STR = "Decision Tree";
@@ -74,12 +79,16 @@ public class ModelConfigFrame2 extends JFrame {
 	private final String CONVERT_TO_HOURS = "Convert to minutes/hours/days";
 	private final String[] outputFormatOption = {NO_SPECIAL_FORMAT, TO_TIMESTAMP_STRING, CONVERT_TO_HOURS};
 	
+	private Predictor pred;
 	
-    public ModelConfigFrame2(boolean isNumeric, ArrayList<String> attr, XLog xLog, PredictorConfigPanel predPanel) {
+    public ModelConfigFrame2(boolean isNumeric, ArrayList<String> attr, PredictorConfigPanel predPanel, Predictor pred) {
+
     	this.attributes = attr;
-    	this.xlog = xLog;
-        initComponents(isNumeric);
 		this.predPanel = predPanel;
+		this.pred = pred;
+    	this.xlog = pred.getXlog();
+    	
+        initComponents(isNumeric);
 
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
@@ -131,14 +140,42 @@ public class ModelConfigFrame2 extends JFrame {
 
         modelLabel.setHorizontalAlignment(SwingConstants.RIGHT);
         modelLabel.setLabelFor(modelComboBox);
-        
-        if (isNumeric) {
-        	modelLabel.setText("Regression model:");
-        	modelComboBox.setModel(new DefaultComboBoxModel<>(new String[] { LINEAR_REGRESSION_STR, RANDOM_FOREST_STR }));
-        } else {
-        	modelLabel.setText("Classification model:");
-        	modelComboBox.setModel(new DefaultComboBoxModel<>(new String[] { DECISION_TREE_STR, RANDOM_FOREST_STR }));
+
+        if(this.pred.getMode() == Mode.PYTHON){//python mode
+        	
+	        if (isNumeric) {
+	        	Set<String> regModels = this.pred.getAvailableRegModelNames();
+	        	String[] availableRegModels  = new String[regModels.size()];
+	        	int ii = 0;
+	        	for(String str: regModels)
+	        		availableRegModels[ii++] = str;
+	        	
+	        	Arrays.sort(availableRegModels);
+	        	
+	        	modelLabel.setText("Regression model:");
+	        	modelComboBox.setModel(new DefaultComboBoxModel<>(availableRegModels));
+	        } else {
+	        	Set<String> clfModels = this.pred.getAvailableClfModelNames();
+	        	String[] availableClfModels  = new String[clfModels.size()];
+	        	int ii = 0;
+	        	for(String str: clfModels)
+	        		availableClfModels[ii++] = str;
+
+	        	Arrays.sort(availableClfModels);
+	        	
+	        	modelLabel.setText("Classification model:");
+	        	modelComboBox.setModel(new DefaultComboBoxModel<>(availableClfModels));
+	        }
+        }else{//should be weka mode
+	        if (isNumeric) {
+	        	modelLabel.setText("Regression model:");
+	        	modelComboBox.setModel(new DefaultComboBoxModel<>(new String[] { LINEAR_REGRESSION_STR, RANDOM_FOREST_STR }));
+	        } else {
+	        	modelLabel.setText("Classification model:");
+	        	modelComboBox.setModel(new DefaultComboBoxModel<>(new String[] { DECISION_TREE_STR, RANDOM_FOREST_STR }));
+	        }        	
         }
+        
 
         // set encoding pane
 
@@ -480,14 +517,25 @@ public class ModelConfigFrame2 extends JFrame {
     		encType[ii] = this.encTypes.get(ii);
     	}
     	
-    	String selectedModel = (String) modelComboBox.getSelectedItem();
-    	if (selectedModel.equals(DECISION_TREE_STR))
-    		modelType = PredictorModelType.DecisionTree;
-    	else if (selectedModel.equals(RANDOM_FOREST_STR))
-    		modelType = PredictorModelType.RandomForest;
-    	else 
-    		modelType = PredictorModelType.LinearRegression;
-
+    	
+    	//Handling Model choice
+    	
+        if(this.pred.getMode() == Mode.PYTHON){//python mode
+        	
+	    	String selectedModel = (String) modelComboBox.getSelectedItem();
+	    	modelTypePy = selectedModel;
+        	
+        }else{//should be weka mode
+        	
+	    	String selectedModel = (String) modelComboBox.getSelectedItem();
+	    	if (selectedModel.equals(DECISION_TREE_STR))
+	    		modelType = PredictorModelType.DecisionTree;
+	    	else if (selectedModel.equals(RANDOM_FOREST_STR))
+	    		modelType = PredictorModelType.RandomForest;
+	    	else 
+	    		modelType = PredictorModelType.LinearRegression;
+        }
+    	//END OF Handling Model choice
     	
     	String selectedOutputFormat = (String) outputFormatComboBox.getSelectedItem();
     	if (selectedOutputFormat.equals(TO_TIMESTAMP_STRING))
@@ -497,7 +545,7 @@ public class ModelConfigFrame2 extends JFrame {
     	else 
     		specialOutputFormat = SpecialOutputFormat.NO_SPECIAL_FORMAT;
     	
-    	this.predPanel.updateConfig(encType, oneHotEncodingV2Info, attEncodingInfo, this.modelType, this.specialOutputFormat);
+    	this.predPanel.updateConfig(encType, oneHotEncodingV2Info, attEncodingInfo, this.modelType, this.modelTypePy, this.specialOutputFormat);
     	this.setVisible(false);
     	this.dispose();
     }                                          

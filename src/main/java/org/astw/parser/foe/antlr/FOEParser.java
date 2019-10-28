@@ -12,6 +12,11 @@ import org.astw.foe.impl.numeric.indexexp.*;
 import org.astw.*;
 import org.astw.util.*;
 import org.astw.util.Const;
+import org.astw.parser.numConditionalAggregation.*;
+import org.astw.parser.nonNumConditinoalAggregation.*;
+
+import java.util.*;
+
 
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
@@ -33,14 +38,16 @@ public class FOEParser extends Parser {
 		OR=1, AND=2, NEG=3, IMPL=4, End=5, EQUAL=6, NOTEQUAL=7, GT=8, GTE=9, LT=10, 
 		LTE=11, Plus=12, Minus=13, Multiply=14, Divide=15, String=16, True=17, 
 		False=18, EXIST=19, FORALL=20, DOT=21, LP=22, RP=23, WS=24, Var=25, SPEC=26, 
-		AttName=27, Qf=28, Quote=29, NEWLINE=30, Number=31;
+		AttName=27, Qf=28, Quote=29, NEWLINE=30, PosNumber=31, NUMERIC_AGG_FUNC_SUM=32, 
+		NUMERIC_AGG_FUNC_AVG=33, NUMERIC_AGG_FUNC_MAX=34, NUMERIC_AGG_FUNC_MIN=35, 
+		NUMERIC_AGG_FUNC_COUNT=36, NUMERIC_AGG_FUNC_COUNTVAL=37, NON_NUMERIC_AGG_FUNC_CONCAT=38;
 	public static final int
 		RULE_parse = 0, RULE_formula = 1, RULE_quantification = 2, RULE_eventExp = 3, 
 		RULE_nonNumExp = 4, RULE_numExp = 5, RULE_indexExp = 6, RULE_query = 7, 
-		RULE_queryNumeric = 8;
+		RULE_queryNumeric = 8, RULE_realNumber = 9;
 	public static final String[] ruleNames = {
 		"parse", "formula", "quantification", "eventExp", "nonNumExp", "numExp", 
-		"indexExp", "query", "queryNumeric"
+		"indexExp", "query", "queryNumeric", "realNumber"
 	};
 
 	private static final String[] _LITERAL_NAMES = {
@@ -52,7 +59,9 @@ public class FOEParser extends Parser {
 		null, "OR", "AND", "NEG", "IMPL", "End", "EQUAL", "NOTEQUAL", "GT", "GTE", 
 		"LT", "LTE", "Plus", "Minus", "Multiply", "Divide", "String", "True", 
 		"False", "EXIST", "FORALL", "DOT", "LP", "RP", "WS", "Var", "SPEC", "AttName", 
-		"Qf", "Quote", "NEWLINE", "Number"
+		"Qf", "Quote", "NEWLINE", "PosNumber", "NUMERIC_AGG_FUNC_SUM", "NUMERIC_AGG_FUNC_AVG", 
+		"NUMERIC_AGG_FUNC_MAX", "NUMERIC_AGG_FUNC_MIN", "NUMERIC_AGG_FUNC_COUNT", 
+		"NUMERIC_AGG_FUNC_COUNTVAL", "NON_NUMERIC_AGG_FUNC_CONCAT"
 	};
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
@@ -130,9 +139,9 @@ public class FOEParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(18);
+			setState(20);
 			((ParseContext)_localctx).f = formula(0);
-			setState(19);
+			setState(21);
 			match(EOF);
 
 			            ((ParseContext)_localctx).parsedFormula =  ((ParseContext)_localctx).f.frm;
@@ -212,13 +221,13 @@ public class FOEParser extends Parser {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(41);
+			setState(43);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,0,_ctx) ) {
 			case 1:
 				{
-				setState(23);
-				((FormulaContext)_localctx).ee = eventExp(0);
+				setState(25);
+				((FormulaContext)_localctx).ee = eventExp();
 
 				            System.out.println("DEBUGA: EVENT: "+(((FormulaContext)_localctx).ee!=null?_input.getText(((FormulaContext)_localctx).ee.start,((FormulaContext)_localctx).ee.stop):null));
 				            ((FormulaContext)_localctx).frm =  ((FormulaContext)_localctx).ee.eventExpression;
@@ -227,11 +236,11 @@ public class FOEParser extends Parser {
 				break;
 			case 2:
 				{
-				setState(26);
-				match(LP);
-				setState(27);
-				((FormulaContext)_localctx).f = formula(0);
 				setState(28);
+				match(LP);
+				setState(29);
+				((FormulaContext)_localctx).f = formula(0);
+				setState(30);
 				match(RP);
 
 				            System.out.println("DEBUGA: BRACKET: "+(((FormulaContext)_localctx).f!=null?_input.getText(((FormulaContext)_localctx).f.start,((FormulaContext)_localctx).f.stop):null));
@@ -241,9 +250,9 @@ public class FOEParser extends Parser {
 				break;
 			case 3:
 				{
-				setState(31);
+				setState(33);
 				match(NEG);
-				setState(32);
+				setState(34);
 				((FormulaContext)_localctx).f = formula(4);
 
 				            System.out.println("DEBUGA: UNARY Formula: "+(((FormulaContext)_localctx).f!=null?_input.getText(((FormulaContext)_localctx).f.start,((FormulaContext)_localctx).f.stop):null));
@@ -253,7 +262,7 @@ public class FOEParser extends Parser {
 				break;
 			case 4:
 				{
-				setState(35);
+				setState(37);
 				((FormulaContext)_localctx).q = _input.LT(1);
 				_la = _input.LA(1);
 				if ( !(_la==EXIST || _la==FORALL) ) {
@@ -264,11 +273,11 @@ public class FOEParser extends Parser {
 					_errHandler.reportMatch(this);
 					consume();
 				}
-				setState(36);
-				((FormulaContext)_localctx).var = match(Var);
-				setState(37);
-				match(DOT);
 				setState(38);
+				((FormulaContext)_localctx).var = match(Var);
+				setState(39);
+				match(DOT);
+				setState(40);
 				((FormulaContext)_localctx).fq = quantification();
 				 
 				            System.out.println("DEBUGA: Quantification: "+(((FormulaContext)_localctx).q!=null?((FormulaContext)_localctx).q.getText():null)+", "+(((FormulaContext)_localctx).var!=null?((FormulaContext)_localctx).var.getText():null)+", "+(((FormulaContext)_localctx).fq!=null?_input.getText(((FormulaContext)_localctx).fq.start,((FormulaContext)_localctx).fq.stop):null));
@@ -282,7 +291,7 @@ public class FOEParser extends Parser {
 				break;
 			}
 			_ctx.stop = _input.LT(-1);
-			setState(55);
+			setState(57);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,2,_ctx);
 			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
@@ -290,7 +299,7 @@ public class FOEParser extends Parser {
 					if ( _parseListeners!=null ) triggerExitRuleEvent();
 					_prevctx = _localctx;
 					{
-					setState(53);
+					setState(55);
 					_errHandler.sync(this);
 					switch ( getInterpreter().adaptivePredict(_input,1,_ctx) ) {
 					case 1:
@@ -299,9 +308,9 @@ public class FOEParser extends Parser {
 						_localctx.f1 = _prevctx;
 						_localctx.f1 = _prevctx;
 						pushNewRecursionContext(_localctx, _startState, RULE_formula);
-						setState(43);
+						setState(45);
 						if (!(precpred(_ctx, 3))) throw new FailedPredicateException(this, "precpred(_ctx, 3)");
-						setState(44);
+						setState(46);
 						((FormulaContext)_localctx).cop = _input.LT(1);
 						_la = _input.LA(1);
 						if ( !(_la==OR || _la==AND) ) {
@@ -312,7 +321,7 @@ public class FOEParser extends Parser {
 							_errHandler.reportMatch(this);
 							consume();
 						}
-						setState(45);
+						setState(47);
 						((FormulaContext)_localctx).f2 = formula(4);
 
 						                      System.out.println("DEBUGA: Binary Formula: "+(((FormulaContext)_localctx).f1!=null?_input.getText(((FormulaContext)_localctx).f1.start,((FormulaContext)_localctx).f1.stop):null)+", "+(((FormulaContext)_localctx).cop!=null?((FormulaContext)_localctx).cop.getText():null)+", "+(((FormulaContext)_localctx).f2!=null?_input.getText(((FormulaContext)_localctx).f2.start,((FormulaContext)_localctx).f2.stop):null));
@@ -330,11 +339,11 @@ public class FOEParser extends Parser {
 						_localctx.f1 = _prevctx;
 						_localctx.f1 = _prevctx;
 						pushNewRecursionContext(_localctx, _startState, RULE_formula);
-						setState(48);
-						if (!(precpred(_ctx, 1))) throw new FailedPredicateException(this, "precpred(_ctx, 1)");
-						setState(49);
-						((FormulaContext)_localctx).cop = match(IMPL);
 						setState(50);
+						if (!(precpred(_ctx, 1))) throw new FailedPredicateException(this, "precpred(_ctx, 1)");
+						setState(51);
+						((FormulaContext)_localctx).cop = match(IMPL);
+						setState(52);
 						((FormulaContext)_localctx).f2 = formula(2);
 
 						                      System.out.println("DEBUGA: Binary Formula: "+(((FormulaContext)_localctx).f1!=null?_input.getText(((FormulaContext)_localctx).f1.start,((FormulaContext)_localctx).f1.stop):null)+", "+(((FormulaContext)_localctx).cop!=null?((FormulaContext)_localctx).cop.getText():null)+", "+(((FormulaContext)_localctx).f2!=null?_input.getText(((FormulaContext)_localctx).f2.start,((FormulaContext)_localctx).f2.stop):null));
@@ -345,7 +354,7 @@ public class FOEParser extends Parser {
 					}
 					} 
 				}
-				setState(57);
+				setState(59);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,2,_ctx);
 			}
@@ -399,13 +408,13 @@ public class FOEParser extends Parser {
 		enterRule(_localctx, 4, RULE_quantification);
 		int _la;
 		try {
-			setState(72);
+			setState(74);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,3,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(58);
+				setState(60);
 				((QuantificationContext)_localctx).f = formula(0);
 
 				            System.out.println("DEBUGA: QUANT - formula: "+(((QuantificationContext)_localctx).f!=null?_input.getText(((QuantificationContext)_localctx).f.start,((QuantificationContext)_localctx).f.stop):null));
@@ -416,11 +425,11 @@ public class FOEParser extends Parser {
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(61);
-				match(LP);
-				setState(62);
-				((QuantificationContext)_localctx).fq = quantification();
 				setState(63);
+				match(LP);
+				setState(64);
+				((QuantificationContext)_localctx).fq = quantification();
+				setState(65);
 				match(RP);
 
 				            System.out.println("DEBUGA: QUANT - Quant: "+(((QuantificationContext)_localctx).fq!=null?_input.getText(((QuantificationContext)_localctx).fq.start,((QuantificationContext)_localctx).fq.stop):null));                          
@@ -431,7 +440,7 @@ public class FOEParser extends Parser {
 			case 3:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(66);
+				setState(68);
 				((QuantificationContext)_localctx).q = _input.LT(1);
 				_la = _input.LA(1);
 				if ( !(_la==EXIST || _la==FORALL) ) {
@@ -442,11 +451,11 @@ public class FOEParser extends Parser {
 					_errHandler.reportMatch(this);
 					consume();
 				}
-				setState(67);
-				((QuantificationContext)_localctx).var = match(Var);
-				setState(68);
-				match(DOT);
 				setState(69);
+				((QuantificationContext)_localctx).var = match(Var);
+				setState(70);
+				match(DOT);
+				setState(71);
 				((QuantificationContext)_localctx).fq = quantification();
 
 				            System.out.println("DEBUGA: QUANT - recur: "+(((QuantificationContext)_localctx).q!=null?((QuantificationContext)_localctx).q.getText():null)+", "+(((QuantificationContext)_localctx).var!=null?((QuantificationContext)_localctx).var.getText():null)+", "+(((QuantificationContext)_localctx).fq!=null?_input.getText(((QuantificationContext)_localctx).fq.start,((QuantificationContext)_localctx).fq.stop):null));
@@ -473,7 +482,6 @@ public class FOEParser extends Parser {
 
 	public static class EventExpContext extends ParserRuleContext {
 		public EventExp eventExpression;
-		public EventExpContext ee1;
 		public Token eeT;
 		public EventExpContext ee;
 		public NonNumExpContext nne1;
@@ -482,16 +490,12 @@ public class FOEParser extends Parser {
 		public NumExpContext ne1;
 		public Token op;
 		public NumExpContext ne2;
-		public EventExpContext ee2;
 		public TerminalNode True() { return getToken(FOEParser.True, 0); }
 		public TerminalNode False() { return getToken(FOEParser.False, 0); }
 		public TerminalNode LP() { return getToken(FOEParser.LP, 0); }
 		public TerminalNode RP() { return getToken(FOEParser.RP, 0); }
-		public List<EventExpContext> eventExp() {
-			return getRuleContexts(EventExpContext.class);
-		}
-		public EventExpContext eventExp(int i) {
-			return getRuleContext(EventExpContext.class,i);
+		public EventExpContext eventExp() {
+			return getRuleContext(EventExpContext.class,0);
 		}
 		public List<NonNumExpContext> nonNumExp() {
 			return getRuleContexts(NonNumExpContext.class);
@@ -526,27 +530,17 @@ public class FOEParser extends Parser {
 	}
 
 	public final EventExpContext eventExp() throws RecognitionException {
-		return eventExp(0);
-	}
-
-	private EventExpContext eventExp(int _p) throws RecognitionException {
-		ParserRuleContext _parentctx = _ctx;
-		int _parentState = getState();
-		EventExpContext _localctx = new EventExpContext(_ctx, _parentState);
-		EventExpContext _prevctx = _localctx;
-		int _startState = 6;
-		enterRecursionRule(_localctx, 6, RULE_eventExp, _p);
+		EventExpContext _localctx = new EventExpContext(_ctx, getState());
+		enterRule(_localctx, 6, RULE_eventExp);
 		int _la;
 		try {
-			int _alt;
-			enterOuterAlt(_localctx, 1);
-			{
-			setState(92);
+			setState(93);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,4,_ctx) ) {
 			case 1:
+				enterOuterAlt(_localctx, 1);
 				{
-				setState(75);
+				setState(76);
 				((EventExpContext)_localctx).eeT = _input.LT(1);
 				_la = _input.LA(1);
 				if ( !(_la==True || _la==False) ) {
@@ -568,12 +562,13 @@ public class FOEParser extends Parser {
 				}
 				break;
 			case 2:
+				enterOuterAlt(_localctx, 2);
 				{
-				setState(77);
-				match(LP);
 				setState(78);
-				((EventExpContext)_localctx).ee = eventExp(0);
+				match(LP);
 				setState(79);
+				((EventExpContext)_localctx).ee = eventExp();
+				setState(80);
 				match(RP);
 
 				            System.out.println("DEBUGA: EE-BRACKET: "+(((EventExpContext)_localctx).ee!=null?_input.getText(((EventExpContext)_localctx).ee.start,((EventExpContext)_localctx).ee.stop):null));
@@ -582,10 +577,11 @@ public class FOEParser extends Parser {
 				}
 				break;
 			case 3:
+				enterOuterAlt(_localctx, 3);
 				{
-				setState(82);
-				((EventExpContext)_localctx).nne1 = nonNumExp();
 				setState(83);
+				((EventExpContext)_localctx).nne1 = nonNumExp();
+				setState(84);
 				((EventExpContext)_localctx).opnne = _input.LT(1);
 				_la = _input.LA(1);
 				if ( !(_la==EQUAL || _la==NOTEQUAL) ) {
@@ -596,7 +592,7 @@ public class FOEParser extends Parser {
 					_errHandler.reportMatch(this);
 					consume();
 				}
-				setState(84);
+				setState(85);
 				((EventExpContext)_localctx).nne2 = nonNumExp();
 
 				            System.out.println("DEBUGA: EE-NonNE-OP: "+(((EventExpContext)_localctx).nne1!=null?_input.getText(((EventExpContext)_localctx).nne1.start,((EventExpContext)_localctx).nne1.stop):null)+", "+(((EventExpContext)_localctx).opnne!=null?((EventExpContext)_localctx).opnne.getText():null)+", "+(((EventExpContext)_localctx).nne2!=null?_input.getText(((EventExpContext)_localctx).nne2.start,((EventExpContext)_localctx).nne2.stop):null));
@@ -612,10 +608,11 @@ public class FOEParser extends Parser {
 				}
 				break;
 			case 4:
+				enterOuterAlt(_localctx, 4);
 				{
-				setState(87);
-				((EventExpContext)_localctx).ne1 = numExp(0);
 				setState(88);
+				((EventExpContext)_localctx).ne1 = numExp(0);
+				setState(89);
 				((EventExpContext)_localctx).op = _input.LT(1);
 				_la = _input.LA(1);
 				if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << EQUAL) | (1L << NOTEQUAL) | (1L << GT) | (1L << GTE) | (1L << LT) | (1L << LTE))) != 0)) ) {
@@ -626,7 +623,7 @@ public class FOEParser extends Parser {
 					_errHandler.reportMatch(this);
 					consume();
 				}
-				setState(89);
+				setState(90);
 				((EventExpContext)_localctx).ne2 = numExp(0);
 
 				            System.out.println("DEBUGA: EE-NE-OP: "+(((EventExpContext)_localctx).ne1!=null?_input.getText(((EventExpContext)_localctx).ne1.start,((EventExpContext)_localctx).ne1.stop):null)+", "+(((EventExpContext)_localctx).op!=null?((EventExpContext)_localctx).op.getText():null)+", "+(((EventExpContext)_localctx).ne2!=null?_input.getText(((EventExpContext)_localctx).ne2.start,((EventExpContext)_localctx).ne2.stop):null));
@@ -654,54 +651,6 @@ public class FOEParser extends Parser {
 				}
 				break;
 			}
-			_ctx.stop = _input.LT(-1);
-			setState(101);
-			_errHandler.sync(this);
-			_alt = getInterpreter().adaptivePredict(_input,5,_ctx);
-			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
-				if ( _alt==1 ) {
-					if ( _parseListeners!=null ) triggerExitRuleEvent();
-					_prevctx = _localctx;
-					{
-					{
-					_localctx = new EventExpContext(_parentctx, _parentState);
-					_localctx.ee1 = _prevctx;
-					_localctx.ee1 = _prevctx;
-					pushNewRecursionContext(_localctx, _startState, RULE_eventExp);
-					setState(94);
-					if (!(precpred(_ctx, 1))) throw new FailedPredicateException(this, "precpred(_ctx, 1)");
-					setState(95);
-					((EventExpContext)_localctx).op = _input.LT(1);
-					_la = _input.LA(1);
-					if ( !(_la==EQUAL || _la==NOTEQUAL) ) {
-						((EventExpContext)_localctx).op = (Token)_errHandler.recoverInline(this);
-					}
-					else {
-						if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
-						_errHandler.reportMatch(this);
-						consume();
-					}
-					setState(96);
-					((EventExpContext)_localctx).ee2 = eventExp(2);
-
-					                      System.out.println("DEBUGA: EE-EE-OP: "+(((EventExpContext)_localctx).ee1!=null?_input.getText(((EventExpContext)_localctx).ee1.start,((EventExpContext)_localctx).ee1.stop):null)+", "+(((EventExpContext)_localctx).op!=null?((EventExpContext)_localctx).op.getText():null)+", "+(((EventExpContext)_localctx).ee2!=null?_input.getText(((EventExpContext)_localctx).ee2.start,((EventExpContext)_localctx).ee2.stop):null));
-					                      
-					                      if((((EventExpContext)_localctx).op!=null?((EventExpContext)_localctx).op.getText():null).equals("==")){
-					                          ((EventExpContext)_localctx).eventExpression =  new EventExpComparison(
-					                              ((EventExpContext)_localctx).ee1.eventExpression, Const.ComparisonOperator.EQUAL, ((EventExpContext)_localctx).ee2.eventExpression);
-					                      }else if((((EventExpContext)_localctx).op!=null?((EventExpContext)_localctx).op.getText():null).equals("!=")){
-					                          ((EventExpContext)_localctx).eventExpression =  new EventExpComparison(
-					                              ((EventExpContext)_localctx).ee1.eventExpression, Const.ComparisonOperator.NOT_EQUAL, ((EventExpContext)_localctx).ee2.eventExpression);
-					                      }
-					                  
-					}
-					} 
-				}
-				setState(103);
-				_errHandler.sync(this);
-				_alt = getInterpreter().adaptivePredict(_input,5,_ctx);
-			}
-			}
 		}
 		catch (RecognitionException re) {
 			_localctx.exception = re;
@@ -709,7 +658,7 @@ public class FOEParser extends Parser {
 			_errHandler.recover(this, re);
 		}
 		finally {
-			unrollRecursionContexts(_parentctx);
+			exitRule();
 		}
 		return _localctx;
 	}
@@ -719,6 +668,7 @@ public class FOEParser extends Parser {
 		public Token nneString;
 		public Token nneBool;
 		public QueryContext nneQuery;
+		public Token concatAgg;
 		public NonNumExpContext nne;
 		public TerminalNode String() { return getToken(FOEParser.String, 0); }
 		public TerminalNode True() { return getToken(FOEParser.True, 0); }
@@ -726,6 +676,7 @@ public class FOEParser extends Parser {
 		public QueryContext query() {
 			return getRuleContext(QueryContext.class,0);
 		}
+		public TerminalNode NON_NUMERIC_AGG_FUNC_CONCAT() { return getToken(FOEParser.NON_NUMERIC_AGG_FUNC_CONCAT, 0); }
 		public TerminalNode LP() { return getToken(FOEParser.LP, 0); }
 		public TerminalNode RP() { return getToken(FOEParser.RP, 0); }
 		public NonNumExpContext nonNumExp() {
@@ -750,13 +701,13 @@ public class FOEParser extends Parser {
 		enterRule(_localctx, 8, RULE_nonNumExp);
 		int _la;
 		try {
-			setState(116);
+			setState(109);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case String:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(104);
+				setState(95);
 				((NonNumExpContext)_localctx).nneString = match(String);
 
 
@@ -774,7 +725,7 @@ public class FOEParser extends Parser {
 			case False:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(106);
+				setState(97);
 				((NonNumExpContext)_localctx).nneBool = _input.LT(1);
 				_la = _input.LA(1);
 				if ( !(_la==True || _la==False) ) {
@@ -798,7 +749,7 @@ public class FOEParser extends Parser {
 			case Qf:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(108);
+				setState(99);
 				((NonNumExpContext)_localctx).nneQuery = query();
 
 				            System.out.println("DEBUGA: NonNE-Query: "+(((NonNumExpContext)_localctx).nneQuery!=null?_input.getText(((NonNumExpContext)_localctx).nneQuery.start,((NonNumExpContext)_localctx).nneQuery.stop):null));
@@ -806,14 +757,44 @@ public class FOEParser extends Parser {
 				         
 				}
 				break;
-			case LP:
+			case NON_NUMERIC_AGG_FUNC_CONCAT:
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(111);
+				setState(102);
+				((NonNumExpContext)_localctx).concatAgg = match(NON_NUMERIC_AGG_FUNC_CONCAT);
+
+				            System.out.println("DEBUGA: CONCAT-agg-func: "+(((NonNumExpContext)_localctx).concatAgg!=null?((NonNumExpContext)_localctx).concatAgg.getText():null));
+				                       
+				            String aggStatement = (((NonNumExpContext)_localctx).concatAgg!=null?((NonNumExpContext)_localctx).concatAgg.getText():null);
+				            
+				            //filter out function name and the brackets
+				            aggStatement = aggStatement.replace("CONCAT{","");
+				            aggStatement = aggStatement.replace("}","");
+				            System.out.println("DEBUGA: CONCAT-agg-func content: "+aggStatement);
+				            
+				            try{
+				                NonNumConditionalAggregation nnca = 
+				                    new NonNumConditionalAggregationParser().parse(aggStatement);
+				                nnca.setAggregationType(Const.NonNumAggregationType.CONCAT);
+				                
+				                System.out.println("DEBUGA: AggType: "+Const.NonNumAggregationType.CONCAT);
+
+				                ((NonNumExpContext)_localctx).nonNumericExpression =  nnca;
+
+				            }catch(Exception e){
+				              notifyErrorListeners("ERROR: " + e.getMessage());
+				            }
+				         
+				}
+				break;
+			case LP:
+				enterOuterAlt(_localctx, 5);
+				{
+				setState(104);
 				match(LP);
-				setState(112);
+				setState(105);
 				((NonNumExpContext)_localctx).nne = nonNumExp();
-				setState(113);
+				setState(106);
 				match(RP);
 
 				            System.out.println("DEBUGA: NonEE-BRACKET: "+(((NonNumExpContext)_localctx).nne!=null?_input.getText(((NonNumExpContext)_localctx).nne.start,((NonNumExpContext)_localctx).nne.stop):null));
@@ -839,19 +820,32 @@ public class FOEParser extends Parser {
 	public static class NumExpContext extends ParserRuleContext {
 		public NumExp numericExpression;
 		public NumExpContext ne1;
-		public Token ne;
+		public RealNumberContext ne;
 		public IndexExpContext ip;
 		public QueryNumericContext neQuery;
+		public Token sumAgg;
+		public Token avgAgg;
+		public Token minAgg;
+		public Token maxAgg;
+		public Token cntAgg;
 		public NumExpContext ne5;
 		public Token op;
 		public NumExpContext ne2;
-		public TerminalNode Number() { return getToken(FOEParser.Number, 0); }
+		public RealNumberContext realNumber() {
+			return getRuleContext(RealNumberContext.class,0);
+		}
 		public IndexExpContext indexExp() {
 			return getRuleContext(IndexExpContext.class,0);
 		}
 		public QueryNumericContext queryNumeric() {
 			return getRuleContext(QueryNumericContext.class,0);
 		}
+		public TerminalNode NUMERIC_AGG_FUNC_SUM() { return getToken(FOEParser.NUMERIC_AGG_FUNC_SUM, 0); }
+		public TerminalNode NUMERIC_AGG_FUNC_AVG() { return getToken(FOEParser.NUMERIC_AGG_FUNC_AVG, 0); }
+		public TerminalNode NUMERIC_AGG_FUNC_MIN() { return getToken(FOEParser.NUMERIC_AGG_FUNC_MIN, 0); }
+		public TerminalNode NUMERIC_AGG_FUNC_MAX() { return getToken(FOEParser.NUMERIC_AGG_FUNC_MAX, 0); }
+		public TerminalNode NUMERIC_AGG_FUNC_COUNT() { return getToken(FOEParser.NUMERIC_AGG_FUNC_COUNT, 0); }
+		public TerminalNode NUMERIC_AGG_FUNC_COUNTVAL() { return getToken(FOEParser.NUMERIC_AGG_FUNC_COUNTVAL, 0); }
 		public TerminalNode LP() { return getToken(FOEParser.LP, 0); }
 		public TerminalNode RP() { return getToken(FOEParser.RP, 0); }
 		public List<NumExpContext> numExp() {
@@ -892,17 +886,17 @@ public class FOEParser extends Parser {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(132);
+			setState(138);
 			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,7,_ctx) ) {
+			switch ( getInterpreter().adaptivePredict(_input,6,_ctx) ) {
 			case 1:
 				{
-				setState(119);
-				((NumExpContext)_localctx).ne = match(Number);
+				setState(112);
+				((NumExpContext)_localctx).ne = realNumber();
 
-				            System.out.println("DEBUGA: NE-INT: "+(((NumExpContext)_localctx).ne!=null?((NumExpContext)_localctx).ne.getText():null));
+				            System.out.println("DEBUGA: NE-INT: "+(((NumExpContext)_localctx).ne!=null?_input.getText(((NumExpContext)_localctx).ne.start,((NumExpContext)_localctx).ne.stop):null));
 				            try{
-				                ((NumExpContext)_localctx).numericExpression =  new NumExpNumber((((NumExpContext)_localctx).ne!=null?((NumExpContext)_localctx).ne.getText():null));
+				                ((NumExpContext)_localctx).numericExpression =  new NumExpNumber((((NumExpContext)_localctx).ne!=null?_input.getText(((NumExpContext)_localctx).ne.start,((NumExpContext)_localctx).ne.stop):null));
 				            }catch(Exception e){
 				              notifyErrorListeners("ERROR: " + e.getMessage());
 				            }
@@ -911,7 +905,7 @@ public class FOEParser extends Parser {
 				break;
 			case 2:
 				{
-				setState(121);
+				setState(115);
 				((NumExpContext)_localctx).ip = indexExp(0);
 
 				            System.out.println("DEBUGA: NE-IP: "+(((NumExpContext)_localctx).ip!=null?_input.getText(((NumExpContext)_localctx).ip.start,((NumExpContext)_localctx).ip.stop):null));
@@ -921,7 +915,7 @@ public class FOEParser extends Parser {
 				break;
 			case 3:
 				{
-				setState(124);
+				setState(118);
 				((NumExpContext)_localctx).neQuery = queryNumeric();
 
 				            System.out.println("DEBUGA: NE-Query: "+(((NumExpContext)_localctx).neQuery!=null?_input.getText(((NumExpContext)_localctx).neQuery.start,((NumExpContext)_localctx).neQuery.stop):null));
@@ -931,11 +925,198 @@ public class FOEParser extends Parser {
 				break;
 			case 4:
 				{
+				setState(121);
+				((NumExpContext)_localctx).sumAgg = match(NUMERIC_AGG_FUNC_SUM);
+
+				            System.out.println("DEBUGA: SUM-agg-func: "+(((NumExpContext)_localctx).sumAgg!=null?((NumExpContext)_localctx).sumAgg.getText():null));
+				            
+				            String aggStatement = (((NumExpContext)_localctx).sumAgg!=null?((NumExpContext)_localctx).sumAgg.getText():null);
+				            
+				            //filter out function name and the brackets
+				            aggStatement = aggStatement.replace("SUM{","");
+				            aggStatement = aggStatement.replace("}","");
+				            System.out.println("DEBUGA: SUM-agg-func content: "+aggStatement);
+				            
+				            try{
+				                NumConditionalAggregation nca = 
+				                    new NumConditionalAggregationParser().parse(aggStatement);
+				                nca.setAggregationType(Const.NumAggregationType.SUM);
+				                
+				                System.out.println("DEBUGA: AggType: "+Const.NumAggregationType.SUM);
+
+				                ((NumExpContext)_localctx).numericExpression =  nca;
+
+				            }catch(Exception e){
+				              notifyErrorListeners("ERROR: " + e.getMessage());
+				            }
+				            
+				      
+				}
+				break;
+			case 5:
+				{
+				setState(123);
+				((NumExpContext)_localctx).avgAgg = match(NUMERIC_AGG_FUNC_AVG);
+
+				            System.out.println("DEBUGA: AVG-agg-func: "+(((NumExpContext)_localctx).avgAgg!=null?((NumExpContext)_localctx).avgAgg.getText():null));
+				            
+				            String aggStatement = (((NumExpContext)_localctx).avgAgg!=null?((NumExpContext)_localctx).avgAgg.getText():null);
+				            
+				            //filter out function name and the brackets
+				            aggStatement = aggStatement.replace("AVG{","");
+				            aggStatement = aggStatement.replace("}","");
+				            System.out.println("DEBUGA: AVG-agg-func content: "+aggStatement);
+				            
+				            try{
+				                NumConditionalAggregation nca = 
+				                    new NumConditionalAggregationParser().parse(aggStatement);
+				                nca.setAggregationType(Const.NumAggregationType.AVG);
+				                
+				                System.out.println("DEBUGA: AggType: "+Const.NumAggregationType.AVG);
+				                
+				                ((NumExpContext)_localctx).numericExpression =  nca;
+
+				            }catch(Exception e){
+				              notifyErrorListeners("ERROR: " + e.getMessage());
+				            }
+				      
+				}
+				break;
+			case 6:
+				{
+				setState(125);
+				((NumExpContext)_localctx).minAgg = match(NUMERIC_AGG_FUNC_MIN);
+
+				            System.out.println("DEBUGA: MIN-agg-func: "+(((NumExpContext)_localctx).minAgg!=null?((NumExpContext)_localctx).minAgg.getText():null));
+				            
+				            String aggStatement = (((NumExpContext)_localctx).minAgg!=null?((NumExpContext)_localctx).minAgg.getText():null);
+				            
+				            //filter out function name and the brackets
+				            aggStatement = aggStatement.replace("MIN{","");
+				            aggStatement = aggStatement.replace("}","");
+				            System.out.println("DEBUGA: MIN-agg-func content: "+aggStatement);
+				            
+				            try{
+				                NumConditionalAggregation nca = 
+				                    new NumConditionalAggregationParser().parse(aggStatement);
+				                nca.setAggregationType(Const.NumAggregationType.MIN);
+				                
+				                System.out.println("DEBUGA: AggType: "+Const.NumAggregationType.MIN);
+				                
+				                ((NumExpContext)_localctx).numericExpression =  nca;
+
+				            }catch(Exception e){
+				              notifyErrorListeners("ERROR: " + e.getMessage());
+				            }
+				      
+				}
+				break;
+			case 7:
+				{
 				setState(127);
-				match(LP);
-				setState(128);
-				((NumExpContext)_localctx).ne5 = numExp(0);
+				((NumExpContext)_localctx).maxAgg = match(NUMERIC_AGG_FUNC_MAX);
+
+				            System.out.println("DEBUGA: MAX-agg-func: "+(((NumExpContext)_localctx).maxAgg!=null?((NumExpContext)_localctx).maxAgg.getText():null));
+				            
+				            String aggStatement = (((NumExpContext)_localctx).maxAgg!=null?((NumExpContext)_localctx).maxAgg.getText():null);
+				            
+				            //filter out function name and the brackets
+				            aggStatement = aggStatement.replace("MAX{","");
+				            aggStatement = aggStatement.replace("}","");
+				            System.out.println("DEBUGA: MAX-agg-func content: "+aggStatement);
+				            
+				            try{
+				                NumConditionalAggregation nca = 
+				                    new NumConditionalAggregationParser().parse(aggStatement);
+				                nca.setAggregationType(Const.NumAggregationType.MAX);
+				                
+				                System.out.println("DEBUGA: AggType: "+Const.NumAggregationType.MAX);
+				                
+				                ((NumExpContext)_localctx).numericExpression =  nca;
+
+				            }catch(Exception e){
+				              notifyErrorListeners("ERROR: " + e.getMessage());
+				            }
+				      
+				}
+				break;
+			case 8:
+				{
 				setState(129);
+				((NumExpContext)_localctx).cntAgg = match(NUMERIC_AGG_FUNC_COUNT);
+
+				            System.out.println("DEBUGA: COUNT-agg-func: "+(((NumExpContext)_localctx).cntAgg!=null?((NumExpContext)_localctx).cntAgg.getText():null));
+				            
+				            String aggStatement = (((NumExpContext)_localctx).cntAgg!=null?((NumExpContext)_localctx).cntAgg.getText():null);
+				            
+				            //filter out function name and the brackets
+				            aggStatement = aggStatement.replace("COUNT{","");
+				            aggStatement = aggStatement.replace("}","");
+				            System.out.println("DEBUGA: COUNT-agg-func content: "+aggStatement);
+				            
+				            try{
+				                NumConditionalAggregation nca = 
+				                    new NumConditionalAggregationParser().parseCountAggFunc(aggStatement);
+				                nca.setAggregationType(Const.NumAggregationType.COUNT);
+				                
+				                System.out.println("DEBUGA: AggType: "+Const.NumAggregationType.COUNT);
+				                
+				                ((NumExpContext)_localctx).numericExpression =  nca;
+
+				            }catch(Exception e){
+				              notifyErrorListeners("ERROR: " + e.getMessage());
+				            }
+				      
+				}
+				break;
+			case 9:
+				{
+				setState(131);
+				((NumExpContext)_localctx).cntAgg = match(NUMERIC_AGG_FUNC_COUNTVAL);
+
+				            System.out.println("DEBUGA: COUNTVAL-agg-func: "+(((NumExpContext)_localctx).cntAgg!=null?((NumExpContext)_localctx).cntAgg.getText():null));
+				            
+				            String aggStatement = (((NumExpContext)_localctx).cntAgg!=null?((NumExpContext)_localctx).cntAgg.getText():null);
+				                        
+				            //filter out function name and the brackets
+				            aggStatement = aggStatement.replace("COUNTVAL{","");
+				            aggStatement = aggStatement.replace("}","");
+				            System.out.println("DEBUGA: COUNTVAL-agg-func content: "+aggStatement);
+				            
+				            //tokenize the content
+				            StringTokenizer strtok = new StringTokenizer(aggStatement, "#");
+				            String attName = strtok.nextToken().trim();
+				            StringTokenizer strtok2 = new StringTokenizer(strtok.nextToken(), ":");
+				            String aggRangeStart = strtok2.nextToken().trim();
+				            String aggRangeEnd = strtok2.nextToken().trim();
+
+				            
+				            try{
+				                IndexExp aggRangeSt = 
+				                    new NumConditionalAggregationParser().parseAggRange(aggRangeStart);
+				                IndexExp aggRangeEd = 
+				                    new NumConditionalAggregationParser().parseAggRange(aggRangeEnd);
+				                    
+				                NumCountValAggregation ncva = 
+				                        new NumCountValAggregation(attName, aggRangeSt, aggRangeEd);
+				                    
+				                ((NumExpContext)_localctx).numericExpression =  ncva;
+
+				            }catch(Exception e){
+				              notifyErrorListeners("ERROR: " + e.getMessage());
+				            }
+
+				            
+				      
+				}
+				break;
+			case 10:
+				{
+				setState(133);
+				match(LP);
+				setState(134);
+				((NumExpContext)_localctx).ne5 = numExp(0);
+				setState(135);
 				match(RP);
 
 				            System.out.println("DEBUGA: EE-BRACKET: "+(((NumExpContext)_localctx).ne5!=null?_input.getText(((NumExpContext)_localctx).ne5.start,((NumExpContext)_localctx).ne5.stop):null));
@@ -945,9 +1126,9 @@ public class FOEParser extends Parser {
 				break;
 			}
 			_ctx.stop = _input.LT(-1);
-			setState(141);
+			setState(147);
 			_errHandler.sync(this);
-			_alt = getInterpreter().adaptivePredict(_input,8,_ctx);
+			_alt = getInterpreter().adaptivePredict(_input,7,_ctx);
 			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					if ( _parseListeners!=null ) triggerExitRuleEvent();
@@ -958,9 +1139,9 @@ public class FOEParser extends Parser {
 					_localctx.ne1 = _prevctx;
 					_localctx.ne1 = _prevctx;
 					pushNewRecursionContext(_localctx, _startState, RULE_numExp);
-					setState(134);
-					if (!(precpred(_ctx, 3))) throw new FailedPredicateException(this, "precpred(_ctx, 3)");
-					setState(135);
+					setState(140);
+					if (!(precpred(_ctx, 9))) throw new FailedPredicateException(this, "precpred(_ctx, 9)");
+					setState(141);
 					((NumExpContext)_localctx).op = _input.LT(1);
 					_la = _input.LA(1);
 					if ( !(_la==Plus || _la==Minus) ) {
@@ -971,8 +1152,8 @@ public class FOEParser extends Parser {
 						_errHandler.reportMatch(this);
 						consume();
 					}
-					setState(136);
-					((NumExpContext)_localctx).ne2 = numExp(4);
+					setState(142);
+					((NumExpContext)_localctx).ne2 = numExp(10);
 
 					                      System.out.println("DEBUGA: NE-Arithmetic: "+(((NumExpContext)_localctx).ne1!=null?_input.getText(((NumExpContext)_localctx).ne1.start,((NumExpContext)_localctx).ne1.stop):null)+", "+(((NumExpContext)_localctx).op!=null?((NumExpContext)_localctx).op.getText():null)+", "+(((NumExpContext)_localctx).ne2!=null?_input.getText(((NumExpContext)_localctx).ne2.start,((NumExpContext)_localctx).ne2.stop):null));
 					                      if((((NumExpContext)_localctx).op!=null?((NumExpContext)_localctx).op.getText():null).equals("+"))
@@ -983,9 +1164,9 @@ public class FOEParser extends Parser {
 					}
 					} 
 				}
-				setState(143);
+				setState(149);
 				_errHandler.sync(this);
-				_alt = getInterpreter().adaptivePredict(_input,8,_ctx);
+				_alt = getInterpreter().adaptivePredict(_input,7,_ctx);
 			}
 			}
 		}
@@ -1008,7 +1189,7 @@ public class FOEParser extends Parser {
 		public Token var;
 		public Token op;
 		public IndexExpContext ie2;
-		public TerminalNode Number() { return getToken(FOEParser.Number, 0); }
+		public TerminalNode PosNumber() { return getToken(FOEParser.PosNumber, 0); }
 		public TerminalNode SPEC() { return getToken(FOEParser.SPEC, 0); }
 		public TerminalNode Var() { return getToken(FOEParser.Var, 0); }
 		public List<IndexExpContext> indexExp() {
@@ -1049,13 +1230,13 @@ public class FOEParser extends Parser {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(151);
+			setState(157);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
-			case Number:
+			case PosNumber:
 				{
-				setState(145);
-				((IndexExpContext)_localctx).num = match(Number);
+				setState(151);
+				((IndexExpContext)_localctx).num = match(PosNumber);
 
 				          System.out.println("DEBUGA: IP-INT: "+(((IndexExpContext)_localctx).num!=null?((IndexExpContext)_localctx).num.getText():null));
 				          try{
@@ -1068,7 +1249,7 @@ public class FOEParser extends Parser {
 				break;
 			case SPEC:
 				{
-				setState(147);
+				setState(153);
 				((IndexExpContext)_localctx).iespec = match(SPEC);
 
 				            System.out.println("DEBUGA: IP-SPEC: "+(((IndexExpContext)_localctx).iespec!=null?((IndexExpContext)_localctx).iespec.getText():null));
@@ -1081,7 +1262,7 @@ public class FOEParser extends Parser {
 				break;
 			case Var:
 				{
-				setState(149);
+				setState(155);
 				((IndexExpContext)_localctx).var = match(Var);
 
 				            System.out.println("DEBUGA: IP-Var: "+(((IndexExpContext)_localctx).var!=null?((IndexExpContext)_localctx).var.getText():null));
@@ -1093,9 +1274,9 @@ public class FOEParser extends Parser {
 				throw new NoViableAltException(this);
 			}
 			_ctx.stop = _input.LT(-1);
-			setState(160);
+			setState(166);
 			_errHandler.sync(this);
-			_alt = getInterpreter().adaptivePredict(_input,10,_ctx);
+			_alt = getInterpreter().adaptivePredict(_input,9,_ctx);
 			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					if ( _parseListeners!=null ) triggerExitRuleEvent();
@@ -1106,9 +1287,9 @@ public class FOEParser extends Parser {
 					_localctx.ie1 = _prevctx;
 					_localctx.ie1 = _prevctx;
 					pushNewRecursionContext(_localctx, _startState, RULE_indexExp);
-					setState(153);
+					setState(159);
 					if (!(precpred(_ctx, 3))) throw new FailedPredicateException(this, "precpred(_ctx, 3)");
-					setState(154);
+					setState(160);
 					((IndexExpContext)_localctx).op = _input.LT(1);
 					_la = _input.LA(1);
 					if ( !(_la==Plus || _la==Minus) ) {
@@ -1119,7 +1300,7 @@ public class FOEParser extends Parser {
 						_errHandler.reportMatch(this);
 						consume();
 					}
-					setState(155);
+					setState(161);
 					((IndexExpContext)_localctx).ie2 = indexExp(4);
 
 					                      System.out.println("DEBUGA: IP-Arithmetic: "+(((IndexExpContext)_localctx).ie1!=null?_input.getText(((IndexExpContext)_localctx).ie1.start,((IndexExpContext)_localctx).ie1.stop):null)+", "+(((IndexExpContext)_localctx).op!=null?((IndexExpContext)_localctx).op.getText():null)+", "+(((IndexExpContext)_localctx).ie2!=null?_input.getText(((IndexExpContext)_localctx).ie2.start,((IndexExpContext)_localctx).ie2.stop):null));
@@ -1132,9 +1313,9 @@ public class FOEParser extends Parser {
 					}
 					} 
 				}
-				setState(162);
+				setState(168);
 				_errHandler.sync(this);
-				_alt = getInterpreter().adaptivePredict(_input,10,_ctx);
+				_alt = getInterpreter().adaptivePredict(_input,9,_ctx);
 			}
 			}
 		}
@@ -1179,11 +1360,11 @@ public class FOEParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(163);
+			setState(169);
 			((QueryContext)_localctx).q = match(Qf);
-			setState(164);
+			setState(170);
 			((QueryContext)_localctx).idx = indexExp(0);
-			setState(165);
+			setState(171);
 			((QueryContext)_localctx).attName = match(AttName);
 
 
@@ -1241,11 +1422,11 @@ public class FOEParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(168);
+			setState(174);
 			((QueryNumericContext)_localctx).q = match(Qf);
-			setState(169);
+			setState(175);
 			((QueryNumericContext)_localctx).idx = indexExp(0);
-			setState(170);
+			setState(176);
 			((QueryNumericContext)_localctx).attName = match(AttName);
 
 
@@ -1273,12 +1454,87 @@ public class FOEParser extends Parser {
 		return _localctx;
 	}
 
+	public static class RealNumberContext extends ParserRuleContext {
+		public String num;
+		public Token p;
+		public Token pn;
+		public TerminalNode PosNumber() { return getToken(FOEParser.PosNumber, 0); }
+		public RealNumberContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_realNumber; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof FOEListener ) ((FOEListener)listener).enterRealNumber(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof FOEListener ) ((FOEListener)listener).exitRealNumber(this);
+		}
+	}
+
+	public final RealNumberContext realNumber() throws RecognitionException {
+		RealNumberContext _localctx = new RealNumberContext(_ctx, getState());
+		enterRule(_localctx, 18, RULE_realNumber);
+		try {
+			setState(187);
+			_errHandler.sync(this);
+			switch ( getInterpreter().adaptivePredict(_input,11,_ctx) ) {
+			case 1:
+				enterOuterAlt(_localctx, 1);
+				{
+				setState(181);
+				_errHandler.sync(this);
+				switch (_input.LA(1)) {
+				case Minus:
+					{
+					setState(179);
+					match(Minus);
+					}
+					break;
+				case PosNumber:
+					{
+					}
+					break;
+				default:
+					throw new NoViableAltException(this);
+				}
+				setState(183);
+				((RealNumberContext)_localctx).p = match(PosNumber);
+
+				                    
+				       ((RealNumberContext)_localctx).num =  '-' + (((RealNumberContext)_localctx).p!=null?((RealNumberContext)_localctx).p.getText():null);
+				    
+				}
+				break;
+			case 2:
+				enterOuterAlt(_localctx, 2);
+				{
+				setState(185);
+				((RealNumberContext)_localctx).pn = match(PosNumber);
+
+				                   
+				       ((RealNumberContext)_localctx).num =  (((RealNumberContext)_localctx).pn!=null?((RealNumberContext)_localctx).pn.getText():null);
+				    
+				}
+				break;
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
 	public boolean sempred(RuleContext _localctx, int ruleIndex, int predIndex) {
 		switch (ruleIndex) {
 		case 1:
 			return formula_sempred((FormulaContext)_localctx, predIndex);
-		case 3:
-			return eventExp_sempred((EventExpContext)_localctx, predIndex);
 		case 5:
 			return numExp_sempred((NumExpContext)_localctx, predIndex);
 		case 6:
@@ -1295,79 +1551,80 @@ public class FOEParser extends Parser {
 		}
 		return true;
 	}
-	private boolean eventExp_sempred(EventExpContext _localctx, int predIndex) {
+	private boolean numExp_sempred(NumExpContext _localctx, int predIndex) {
 		switch (predIndex) {
 		case 2:
-			return precpred(_ctx, 1);
+			return precpred(_ctx, 9);
 		}
 		return true;
 	}
-	private boolean numExp_sempred(NumExpContext _localctx, int predIndex) {
+	private boolean indexExp_sempred(IndexExpContext _localctx, int predIndex) {
 		switch (predIndex) {
 		case 3:
 			return precpred(_ctx, 3);
 		}
 		return true;
 	}
-	private boolean indexExp_sempred(IndexExpContext _localctx, int predIndex) {
-		switch (predIndex) {
-		case 4:
-			return precpred(_ctx, 3);
-		}
-		return true;
-	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3!\u00b0\4\2\t\2\4"+
-		"\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\3\2\3\2"+
-		"\3\2\3\2\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3"+
-		"\3\3\3\3\3\3\3\5\3,\n\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\7\38\n"+
-		"\3\f\3\16\3;\13\3\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4"+
-		"\3\4\5\4K\n\4\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5"+
-		"\3\5\3\5\3\5\3\5\5\5_\n\5\3\5\3\5\3\5\3\5\3\5\7\5f\n\5\f\5\16\5i\13\5"+
-		"\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\5\6w\n\6\3\7\3\7\3\7"+
-		"\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\5\7\u0087\n\7\3\7\3\7\3\7"+
-		"\3\7\3\7\7\7\u008e\n\7\f\7\16\7\u0091\13\7\3\b\3\b\3\b\3\b\3\b\3\b\3\b"+
-		"\5\b\u009a\n\b\3\b\3\b\3\b\3\b\3\b\7\b\u00a1\n\b\f\b\16\b\u00a4\13\b\3"+
-		"\t\3\t\3\t\3\t\3\t\3\n\3\n\3\n\3\n\3\n\3\n\2\6\4\b\f\16\13\2\4\6\b\n\f"+
-		"\16\20\22\2\b\3\2\25\26\3\2\3\4\3\2\23\24\3\2\b\t\3\2\b\r\3\2\16\17\2"+
-		"\u00bb\2\24\3\2\2\2\4+\3\2\2\2\6J\3\2\2\2\b^\3\2\2\2\nv\3\2\2\2\f\u0086"+
-		"\3\2\2\2\16\u0099\3\2\2\2\20\u00a5\3\2\2\2\22\u00aa\3\2\2\2\24\25\5\4"+
-		"\3\2\25\26\7\2\2\3\26\27\b\2\1\2\27\3\3\2\2\2\30\31\b\3\1\2\31\32\5\b"+
-		"\5\2\32\33\b\3\1\2\33,\3\2\2\2\34\35\7\30\2\2\35\36\5\4\3\2\36\37\7\31"+
-		"\2\2\37 \b\3\1\2 ,\3\2\2\2!\"\7\5\2\2\"#\5\4\3\6#$\b\3\1\2$,\3\2\2\2%"+
-		"&\t\2\2\2&\'\7\33\2\2\'(\7\27\2\2()\5\6\4\2)*\b\3\1\2*,\3\2\2\2+\30\3"+
-		"\2\2\2+\34\3\2\2\2+!\3\2\2\2+%\3\2\2\2,9\3\2\2\2-.\f\5\2\2./\t\3\2\2/"+
-		"\60\5\4\3\6\60\61\b\3\1\2\618\3\2\2\2\62\63\f\3\2\2\63\64\7\6\2\2\64\65"+
-		"\5\4\3\4\65\66\b\3\1\2\668\3\2\2\2\67-\3\2\2\2\67\62\3\2\2\28;\3\2\2\2"+
-		"9\67\3\2\2\29:\3\2\2\2:\5\3\2\2\2;9\3\2\2\2<=\5\4\3\2=>\b\4\1\2>K\3\2"+
-		"\2\2?@\7\30\2\2@A\5\6\4\2AB\7\31\2\2BC\b\4\1\2CK\3\2\2\2DE\t\2\2\2EF\7"+
-		"\33\2\2FG\7\27\2\2GH\5\6\4\2HI\b\4\1\2IK\3\2\2\2J<\3\2\2\2J?\3\2\2\2J"+
-		"D\3\2\2\2K\7\3\2\2\2LM\b\5\1\2MN\t\4\2\2N_\b\5\1\2OP\7\30\2\2PQ\5\b\5"+
-		"\2QR\7\31\2\2RS\b\5\1\2S_\3\2\2\2TU\5\n\6\2UV\t\5\2\2VW\5\n\6\2WX\b\5"+
-		"\1\2X_\3\2\2\2YZ\5\f\7\2Z[\t\6\2\2[\\\5\f\7\2\\]\b\5\1\2]_\3\2\2\2^L\3"+
-		"\2\2\2^O\3\2\2\2^T\3\2\2\2^Y\3\2\2\2_g\3\2\2\2`a\f\3\2\2ab\t\5\2\2bc\5"+
-		"\b\5\4cd\b\5\1\2df\3\2\2\2e`\3\2\2\2fi\3\2\2\2ge\3\2\2\2gh\3\2\2\2h\t"+
-		"\3\2\2\2ig\3\2\2\2jk\7\22\2\2kw\b\6\1\2lm\t\4\2\2mw\b\6\1\2no\5\20\t\2"+
-		"op\b\6\1\2pw\3\2\2\2qr\7\30\2\2rs\5\n\6\2st\7\31\2\2tu\b\6\1\2uw\3\2\2"+
-		"\2vj\3\2\2\2vl\3\2\2\2vn\3\2\2\2vq\3\2\2\2w\13\3\2\2\2xy\b\7\1\2yz\7!"+
-		"\2\2z\u0087\b\7\1\2{|\5\16\b\2|}\b\7\1\2}\u0087\3\2\2\2~\177\5\22\n\2"+
-		"\177\u0080\b\7\1\2\u0080\u0087\3\2\2\2\u0081\u0082\7\30\2\2\u0082\u0083"+
-		"\5\f\7\2\u0083\u0084\7\31\2\2\u0084\u0085\b\7\1\2\u0085\u0087\3\2\2\2"+
-		"\u0086x\3\2\2\2\u0086{\3\2\2\2\u0086~\3\2\2\2\u0086\u0081\3\2\2\2\u0087"+
-		"\u008f\3\2\2\2\u0088\u0089\f\5\2\2\u0089\u008a\t\7\2\2\u008a\u008b\5\f"+
-		"\7\6\u008b\u008c\b\7\1\2\u008c\u008e\3\2\2\2\u008d\u0088\3\2\2\2\u008e"+
-		"\u0091\3\2\2\2\u008f\u008d\3\2\2\2\u008f\u0090\3\2\2\2\u0090\r\3\2\2\2"+
-		"\u0091\u008f\3\2\2\2\u0092\u0093\b\b\1\2\u0093\u0094\7!\2\2\u0094\u009a"+
-		"\b\b\1\2\u0095\u0096\7\34\2\2\u0096\u009a\b\b\1\2\u0097\u0098\7\33\2\2"+
-		"\u0098\u009a\b\b\1\2\u0099\u0092\3\2\2\2\u0099\u0095\3\2\2\2\u0099\u0097"+
-		"\3\2\2\2\u009a\u00a2\3\2\2\2\u009b\u009c\f\5\2\2\u009c\u009d\t\7\2\2\u009d"+
-		"\u009e\5\16\b\6\u009e\u009f\b\b\1\2\u009f\u00a1\3\2\2\2\u00a0\u009b\3"+
-		"\2\2\2\u00a1\u00a4\3\2\2\2\u00a2\u00a0\3\2\2\2\u00a2\u00a3\3\2\2\2\u00a3"+
-		"\17\3\2\2\2\u00a4\u00a2\3\2\2\2\u00a5\u00a6\7\36\2\2\u00a6\u00a7\5\16"+
-		"\b\2\u00a7\u00a8\7\35\2\2\u00a8\u00a9\b\t\1\2\u00a9\21\3\2\2\2\u00aa\u00ab"+
-		"\7\36\2\2\u00ab\u00ac\5\16\b\2\u00ac\u00ad\7\35\2\2\u00ad\u00ae\b\n\1"+
-		"\2\u00ae\23\3\2\2\2\r+\679J^gv\u0086\u008f\u0099\u00a2";
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3(\u00c0\4\2\t\2\4"+
+		"\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t"+
+		"\13\3\2\3\2\3\2\3\2\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3"+
+		"\3\3\3\3\3\3\3\3\3\3\3\3\3\5\3.\n\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3"+
+		"\3\3\3\7\3:\n\3\f\3\16\3=\13\3\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4"+
+		"\3\4\3\4\3\4\3\4\5\4M\n\4\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5"+
+		"\3\5\3\5\3\5\3\5\3\5\3\5\5\5`\n\5\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6"+
+		"\3\6\3\6\3\6\3\6\3\6\5\6p\n\6\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7"+
+		"\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\5"+
+		"\7\u008d\n\7\3\7\3\7\3\7\3\7\3\7\7\7\u0094\n\7\f\7\16\7\u0097\13\7\3\b"+
+		"\3\b\3\b\3\b\3\b\3\b\3\b\5\b\u00a0\n\b\3\b\3\b\3\b\3\b\3\b\7\b\u00a7\n"+
+		"\b\f\b\16\b\u00aa\13\b\3\t\3\t\3\t\3\t\3\t\3\n\3\n\3\n\3\n\3\n\3\13\3"+
+		"\13\5\13\u00b8\n\13\3\13\3\13\3\13\3\13\5\13\u00be\n\13\3\13\2\5\4\f\16"+
+		"\f\2\4\6\b\n\f\16\20\22\24\2\b\3\2\25\26\3\2\3\4\3\2\23\24\3\2\b\t\3\2"+
+		"\b\r\3\2\16\17\2\u00d2\2\26\3\2\2\2\4-\3\2\2\2\6L\3\2\2\2\b_\3\2\2\2\n"+
+		"o\3\2\2\2\f\u008c\3\2\2\2\16\u009f\3\2\2\2\20\u00ab\3\2\2\2\22\u00b0\3"+
+		"\2\2\2\24\u00bd\3\2\2\2\26\27\5\4\3\2\27\30\7\2\2\3\30\31\b\2\1\2\31\3"+
+		"\3\2\2\2\32\33\b\3\1\2\33\34\5\b\5\2\34\35\b\3\1\2\35.\3\2\2\2\36\37\7"+
+		"\30\2\2\37 \5\4\3\2 !\7\31\2\2!\"\b\3\1\2\".\3\2\2\2#$\7\5\2\2$%\5\4\3"+
+		"\6%&\b\3\1\2&.\3\2\2\2\'(\t\2\2\2()\7\33\2\2)*\7\27\2\2*+\5\6\4\2+,\b"+
+		"\3\1\2,.\3\2\2\2-\32\3\2\2\2-\36\3\2\2\2-#\3\2\2\2-\'\3\2\2\2.;\3\2\2"+
+		"\2/\60\f\5\2\2\60\61\t\3\2\2\61\62\5\4\3\6\62\63\b\3\1\2\63:\3\2\2\2\64"+
+		"\65\f\3\2\2\65\66\7\6\2\2\66\67\5\4\3\4\678\b\3\1\28:\3\2\2\29/\3\2\2"+
+		"\29\64\3\2\2\2:=\3\2\2\2;9\3\2\2\2;<\3\2\2\2<\5\3\2\2\2=;\3\2\2\2>?\5"+
+		"\4\3\2?@\b\4\1\2@M\3\2\2\2AB\7\30\2\2BC\5\6\4\2CD\7\31\2\2DE\b\4\1\2E"+
+		"M\3\2\2\2FG\t\2\2\2GH\7\33\2\2HI\7\27\2\2IJ\5\6\4\2JK\b\4\1\2KM\3\2\2"+
+		"\2L>\3\2\2\2LA\3\2\2\2LF\3\2\2\2M\7\3\2\2\2NO\t\4\2\2O`\b\5\1\2PQ\7\30"+
+		"\2\2QR\5\b\5\2RS\7\31\2\2ST\b\5\1\2T`\3\2\2\2UV\5\n\6\2VW\t\5\2\2WX\5"+
+		"\n\6\2XY\b\5\1\2Y`\3\2\2\2Z[\5\f\7\2[\\\t\6\2\2\\]\5\f\7\2]^\b\5\1\2^"+
+		"`\3\2\2\2_N\3\2\2\2_P\3\2\2\2_U\3\2\2\2_Z\3\2\2\2`\t\3\2\2\2ab\7\22\2"+
+		"\2bp\b\6\1\2cd\t\4\2\2dp\b\6\1\2ef\5\20\t\2fg\b\6\1\2gp\3\2\2\2hi\7(\2"+
+		"\2ip\b\6\1\2jk\7\30\2\2kl\5\n\6\2lm\7\31\2\2mn\b\6\1\2np\3\2\2\2oa\3\2"+
+		"\2\2oc\3\2\2\2oe\3\2\2\2oh\3\2\2\2oj\3\2\2\2p\13\3\2\2\2qr\b\7\1\2rs\5"+
+		"\24\13\2st\b\7\1\2t\u008d\3\2\2\2uv\5\16\b\2vw\b\7\1\2w\u008d\3\2\2\2"+
+		"xy\5\22\n\2yz\b\7\1\2z\u008d\3\2\2\2{|\7\"\2\2|\u008d\b\7\1\2}~\7#\2\2"+
+		"~\u008d\b\7\1\2\177\u0080\7%\2\2\u0080\u008d\b\7\1\2\u0081\u0082\7$\2"+
+		"\2\u0082\u008d\b\7\1\2\u0083\u0084\7&\2\2\u0084\u008d\b\7\1\2\u0085\u0086"+
+		"\7\'\2\2\u0086\u008d\b\7\1\2\u0087\u0088\7\30\2\2\u0088\u0089\5\f\7\2"+
+		"\u0089\u008a\7\31\2\2\u008a\u008b\b\7\1\2\u008b\u008d\3\2\2\2\u008cq\3"+
+		"\2\2\2\u008cu\3\2\2\2\u008cx\3\2\2\2\u008c{\3\2\2\2\u008c}\3\2\2\2\u008c"+
+		"\177\3\2\2\2\u008c\u0081\3\2\2\2\u008c\u0083\3\2\2\2\u008c\u0085\3\2\2"+
+		"\2\u008c\u0087\3\2\2\2\u008d\u0095\3\2\2\2\u008e\u008f\f\13\2\2\u008f"+
+		"\u0090\t\7\2\2\u0090\u0091\5\f\7\f\u0091\u0092\b\7\1\2\u0092\u0094\3\2"+
+		"\2\2\u0093\u008e\3\2\2\2\u0094\u0097\3\2\2\2\u0095\u0093\3\2\2\2\u0095"+
+		"\u0096\3\2\2\2\u0096\r\3\2\2\2\u0097\u0095\3\2\2\2\u0098\u0099\b\b\1\2"+
+		"\u0099\u009a\7!\2\2\u009a\u00a0\b\b\1\2\u009b\u009c\7\34\2\2\u009c\u00a0"+
+		"\b\b\1\2\u009d\u009e\7\33\2\2\u009e\u00a0\b\b\1\2\u009f\u0098\3\2\2\2"+
+		"\u009f\u009b\3\2\2\2\u009f\u009d\3\2\2\2\u00a0\u00a8\3\2\2\2\u00a1\u00a2"+
+		"\f\5\2\2\u00a2\u00a3\t\7\2\2\u00a3\u00a4\5\16\b\6\u00a4\u00a5\b\b\1\2"+
+		"\u00a5\u00a7\3\2\2\2\u00a6\u00a1\3\2\2\2\u00a7\u00aa\3\2\2\2\u00a8\u00a6"+
+		"\3\2\2\2\u00a8\u00a9\3\2\2\2\u00a9\17\3\2\2\2\u00aa\u00a8\3\2\2\2\u00ab"+
+		"\u00ac\7\36\2\2\u00ac\u00ad\5\16\b\2\u00ad\u00ae\7\35\2\2\u00ae\u00af"+
+		"\b\t\1\2\u00af\21\3\2\2\2\u00b0\u00b1\7\36\2\2\u00b1\u00b2\5\16\b\2\u00b2"+
+		"\u00b3\7\35\2\2\u00b3\u00b4\b\n\1\2\u00b4\23\3\2\2\2\u00b5\u00b8\7\17"+
+		"\2\2\u00b6\u00b8\3\2\2\2\u00b7\u00b5\3\2\2\2\u00b7\u00b6\3\2\2\2\u00b8"+
+		"\u00b9\3\2\2\2\u00b9\u00ba\7!\2\2\u00ba\u00be\b\13\1\2\u00bb\u00bc\7!"+
+		"\2\2\u00bc\u00be\b\13\1\2\u00bd\u00b7\3\2\2\2\u00bd\u00bb\3\2\2\2\u00be"+
+		"\25\3\2\2\2\16-9;L_o\u008c\u0095\u009f\u00a8\u00b7\u00bd";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

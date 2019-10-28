@@ -122,7 +122,7 @@ public class AnalyticRuleSpec {
 	 *	We should also check whether all 'Target Expression' have the same ValueType (Numeric/NonNumeric) or not.
 	 * 	</li>
 	 * 	<li> 
-	 * 	We need to check whether each trace only satisfy at most 1 rule 
+	 * 	We need to check whether each trace will be mapped only into 1 value
 	 * 	(i.e., to check whether the rules is suitable for the given log)
 	 * 	</li>
 	 * </ul>
@@ -136,7 +136,7 @@ public class AnalyticRuleSpec {
 
 		ValueType valType = null;
 		
-		//discover the corresponding type and also check the target type mismatch
+		//discover the corresponding type and also check the target type mismatched
 		for(RuleSpec r: rules){
 			r.init(this.xesAttDataType);
 			

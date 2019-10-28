@@ -23,9 +23,8 @@ import org.antlr.v4.runtime.CodePointCharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.TokenStream;
 import org.astw.analyticrules.TargetExpression;
-import org.astw.foe.Formula;
-import org.astw.parser.foe.antlr.FOELexer;
-import org.astw.parser.foe.antlr.FOEParser;
+import org.astw.parser.foe.ParseErrorListener;
+import org.astw.parser.targetexp.antlr.TargetExpLexer;
 import org.astw.parser.targetexp.antlr.TargetExpParser;
 
 /**
@@ -45,20 +44,20 @@ public class TargetExpressionParser {
 		
 		//Setup ANTLR generated lexer and parser
 		CodePointCharStream inputStream = CharStreams.fromString(inputFormula);
-		FOELexer lexer = new FOELexer(inputStream);
+		TargetExpLexer lexer = new TargetExpLexer(inputStream);
 		TokenStream tokenStream = new CommonTokenStream(lexer);
 		TargetExpParser parser = new TargetExpParser(tokenStream);
 		//END OF Setup ANTLR generated lexer and parser
 
 		//Setup ANTLR generated lexer error listener
 		lexer.removeErrorListeners();
-		TargetExpressionParseErrorListener lexerErrorListener = new TargetExpressionParseErrorListener();
+		ParseErrorListener lexerErrorListener = new ParseErrorListener();
 		lexer.addErrorListener(lexerErrorListener);
 		//END OF Setup ANTLR generated lexer error listener
 
 		//Setup ANTLR generated parser error listener
 		parser.removeErrorListeners();
-		TargetExpressionParseErrorListener parserErrorListener = new TargetExpressionParseErrorListener();
+		ParseErrorListener parserErrorListener = new ParseErrorListener();
 		parser.addErrorListener(parserErrorListener );
 		//END OF Setup ANTLR generated parser error listener
 

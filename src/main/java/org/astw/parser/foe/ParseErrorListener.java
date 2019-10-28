@@ -32,6 +32,28 @@ public class ParseErrorListener extends BaseErrorListener {
 	public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol,
 					int line, int charPositionInLine, String msg, RecognitionException re){
 
+		
+//		System.out.println("\n==========================================");
+//		System.out.println("DEBUGGING");
+//		System.out.println("==========================================");
+//		System.out.println("line: "+line);
+//		System.out.println("charPositionInLine: "+charPositionInLine);
+//		System.out.println("msg: "+msg);
+//		System.out.println("offendingSymbol: "+offendingSymbol);
+//		
+//		String sourceName = recognizer.getInputStream().getSourceName();
+//        if (!sourceName.isEmpty()) {
+//            sourceName = String.format("%s:%d:%d: ", sourceName, line, charPositionInLine);
+//        }
+//
+//        System.err.println(sourceName+"line "+line+":"+charPositionInLine+" "+msg);
+//		
+//		if(re != null)
+//			System.out.println("re: "+re.getMessage());
+//		System.out.println("==========================================");
+//		System.out.println("END OF DEBUGGING");
+//		System.out.println("==========================================\n");
+		
 		this.error = true;
 		this.recognitionException = re;
 		this.message = msg;

@@ -40,18 +40,12 @@ import weka.core.Instances;
 public class MeanBasedRegression {
 
 	private AnalyticRulesInstance ariTest;
-	private EncodingType[] encodingType;
-	private OneHotEncodingV2Info[] oneHotEncodingV2Info;
-	private AttributeEncodingInfo[] attEncodingInfo;
 	private double meanPrediction = 0 ;
 	
 	public MeanBasedRegression(AnalyticRulesInstance ariTest, AnalyticRulesInstance ariTrain,  
 			EncodingType[] encodingType, OneHotEncodingV2Info[] oneHotEncodingV2Info, AttributeEncodingInfo[] attEncodingInfo){
 		
 		this.ariTest = ariTest;
-		this.encodingType = encodingType;
-		this.oneHotEncodingV2Info = oneHotEncodingV2Info;
-		this.attEncodingInfo = attEncodingInfo;
 		
 		//compute mean prediction
 		for(RuleInstance ri : ariTrain.getRules()){
@@ -72,8 +66,6 @@ public class MeanBasedRegression {
 		
 		for(RuleInstance ri : ariTest.getRules()){
 			
-			//Instances isnt = ri.computeWEKAInstances("Evaluate", encodingType, oneHotEncodingV2Info, attEncodingInfo, this.ariTest.getAllPossibleTargetValue());
-			//double pred = this.cls.classifyInstance(isnt.firstInstance());
 			double expected = Double.parseDouble(ri.getTargetValue());
 			error += Math.abs(this.meanPrediction - expected);
 			errorSQR += Math.pow((this.meanPrediction - expected), 2);

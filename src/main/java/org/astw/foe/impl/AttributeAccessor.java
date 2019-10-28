@@ -19,6 +19,7 @@ package org.astw.foe.impl;
 
 import java.sql.Timestamp;
 import java.util.HashMap;
+import java.util.Set;
 
 import org.astw.foe.IndexExp;
 import org.astw.foe.NonNumExp;
@@ -50,7 +51,7 @@ public class AttributeAccessor implements NonNumExp, NumExp{
 	private double attNumValue = Const.UNDEFINED_NUM_VAL;
 	private String attNonNumValue = Const.UNDEFINED_NON_NUM_VAL;
 	
-	private boolean typed; // true if this attribute accessor has received a XES data type (after the check with event log)
+	private boolean typed; // true if this attribute accessor has received a XES data type (after the check with respect to the event log)
 	private boolean isEvaluated = false;
 	
  	public AttributeAccessor(IndexExp index, String attName){
@@ -189,6 +190,11 @@ public class AttributeAccessor implements NonNumExp, NumExp{
 	}
 
 	@Override
+	public void evaluateAggregateFunction(XTrace xtrace) throws Exception{
+		
+	}
+
+	@Override
 	public ValueType getValueType() {
 
 		return this.valueType;
@@ -228,7 +234,7 @@ public class AttributeAccessor implements NonNumExp, NumExp{
 		
 		this.isEvaluated = true;
 
-		int idx = this.index.getValue();
+		int idx = this.index.getIdxValue();
 		
 		if(idx <=0 || idx > xtrace.size()){
 			
@@ -284,4 +290,9 @@ public class AttributeAccessor implements NonNumExp, NumExp{
 		this.index.evaluateSpecialIndex(current, last);
 	}
 
+	@Override
+	public Set<String> getVariables(){
+		
+		return this.index.getVariables();
+	}
 }
