@@ -2,10 +2,10 @@
 
 # SDPROM v2 - Specification Driven Predictive Process Monitoring Tool
 
-**Predictive business process monitoring** aims at forecasting the future information of a running business process based on the models extracted from business process execution logs (event logs). This tool, which is called **SDPROM v2**, is a prototype that implements the Specification-Driven Predictive Process Monitoring approach introduced in [[1](https://doi.org/10.1007/978-3-319-91704-7_7), [2](https://arxiv.org/abs/1804.00617)]. This prototype extends the previous version in https://github.com/ariosantoso/Specification-Driven-Predictive-Process-Monitoring/tree/V1, and the extension is based on our paper that has been accepted for publication in the [International Journal on Software and Systems Modeling](http://www.sosym.org/) ([SoSyM](http://www.sosym.org/)). We will provide more information about our recent journal paper soon.
+**Predictive business process monitoring** aims at forecasting the future information of a running business process based on the models extracted from business process execution logs (event logs). This tool, which is called **SDPROM v2**, is a prototype that implements the Specification-Driven Predictive Process Monitoring approach introduced in [[1](https://doi.org/10.1007/s10270-019-00761-w), [2](https://doi.org/10.1007/978-3-319-91704-7_7)]. This prototype extends the previous version in https://github.com/ariosantoso/Specification-Driven-Predictive-Process-Monitoring/tree/V1, and the extension is based on our recent journal paper that has been published in [[1](https://doi.org/10.1007/s10270-019-00761-w)]. 
 
 It is a [ProM](http://promtools.org) plug-in, and it enables us to
-* specify the desired prediction tasks using the language that is introduced in [[1](https://doi.org/10.1007/978-3-319-91704-7_7), [2](https://arxiv.org/abs/1804.00617)], and
+* specify the desired prediction tasks using the language that is introduced in [[1](https://doi.org/10.1007/s10270-019-00761-w), [2](https://doi.org/10.1007/978-3-319-91704-7_7)], and
 * create the corresponding prediction models based on the given specification.
 
 Once the prediction models has been created, they can be used to provide predictive analysis service in business process monitoring. The [screencast](http://bit.ly/sdprom2-screencast) of this tool, which explains the way how to use our tool ([ProM](http://promtools.org) plug-in), can be found in http://bit.ly/sdprom2-screencast. The user manual  of our tools (including the instructions on how to reproduce our experiments) can be found in http://bit.ly/sdprom2-manual. The binary distribution (.jar) of this tool can be found in http://bit.ly/sdprom2-dist. More information about this work can be found in http://bit.ly/sdprom2. 
@@ -52,7 +52,7 @@ If you use our work (e.g., our software) please cite this work. You may use the 
   title="Specification-driven predictive business process monitoring",
   journal="International Journal on Software and Systems Modeling (SoSym)",
   year="2019",
-  note="(to appear)",
+  doi="https://doi.org/10.1007/s10270-019-00761-w"
 }
 @incollection{AS-BPMDS-18,
   author = “Ario Santoso”,
@@ -68,6 +68,8 @@ If you use our work (e.g., our software) please cite this work. You may use the 
 ```
 
 ## References
-[1] [Ario Santoso](http://bit.ly/ariosantoso) (2018): **[Specification-Driven Multi-Perspective Predictive Business Process Monitoring](https://doi.org/10.1007/978-3-319-91704-7_7)**. In [Enterprise, Business-Process and Information Systems Modeling, BPMDS 2018, EMMSAD 2018](https://doi.org/10.1007/978-3-319-91704-7). LNBIP. vol 318. pages 97-113. Springer.
+[1] [Ario Santoso](http://bit.ly/ariosantoso), [Michael Felderer](http://mfelderer.at/) (2019): **[Specification-Driven Predictive Business Process Monitoring](https://doi.org/10.1007/s10270-019-00761-w)**. In [International Journal on Software and Systems Modeling (SoSym)](https://link.springer.com/journal/10270). DOI: https://doi.org/10.1007/s10270-019-00761-w.
 
-[2] [Ario Santoso](http://bit.ly/ariosantoso) (2018): **[Specification-Driven Multi-Perspective Predictive Business Process Monitoring (Extended Version)](https://arxiv.org/abs/1804.00617)**. CoRR Technical Report arXiv:1804.00617, arXiv.org e-Print archive, available at https://arxiv.org/abs/1804.00617.
+[2] [Ario Santoso](http://bit.ly/ariosantoso) (2018): **[Specification-Driven Multi-Perspective Predictive Business Process Monitoring](https://doi.org/10.1007/978-3-319-91704-7_7)**. In [Enterprise, Business-Process and Information Systems Modeling, BPMDS 2018, EMMSAD 2018](https://doi.org/10.1007/978-3-319-91704-7). LNBIP. vol 318. pages 97-113. Springer.
+
+[3] [Ario Santoso](http://bit.ly/ariosantoso) (2018): **[Specification-Driven Multi-Perspective Predictive Business Process Monitoring (Extended Version)](https://arxiv.org/abs/1804.00617)**. CoRR Technical Report arXiv:1804.00617, arXiv.org e-Print archive, available at https://arxiv.org/abs/1804.00617.
