@@ -1,6 +1,6 @@
 [![GitHub license](https://img.shields.io/badge/license-GNU%20General%20Public%20License%20v3.0-blue.svg?style=flat)](http://www.gnu.org/licenses/)
 
-# SDPROM - Specification Driven Predictive Process Monitoring Tool
+# SDPROM - Specification Driven Predictive Business Process Monitoring Tool
 
 **Predictive business process monitoring** aims at forecasting the future information of a running business process based on the models extracted from business process execution logs (event logs). This tool, which is called **SDPROM**, is a prototype that implements the Specification-Driven Predictive Process Monitoring approach introduced in [[1](https://doi.org/10.1007/978-3-319-91704-7_7), [2](https://arxiv.org/abs/1804.00617)]. It is a [ProM](http://promtools.org) plug-in, and it enables us to
 * specify the desired prediction tasks using the language that is introduced in [[1](https://doi.org/10.1007/978-3-319-91704-7_7), [2](https://arxiv.org/abs/1804.00617)], and
